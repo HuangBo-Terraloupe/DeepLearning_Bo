@@ -1,8 +1,4 @@
-import pickle
-from objectdetection.dataset.image_dataset import ImageDataset
-from objectdetection import callbacks
-import numpy as np
-import numpy
+
 
 from keras.optimizers import Adam
 from keras.backend import set_image_dim_ordering
@@ -13,8 +9,6 @@ from keras.layers import merge
 from keras.models import model_from_json
 from keras.models import load_model
 from keras.callbacks import (ModelCheckpoint, EarlyStopping, LearningRateScheduler, TensorBoard)
-
-from objectdetection.utils import logger
 
 
 class UNet(object):
@@ -95,9 +89,7 @@ class UNet(object):
         output = Activation(activation='softmax', name='class_out')(output)
 
         model = Model(input, output)
-        if self.weight_file:
-            logger.info('Loading weights from file:{}'.format(self.weight_file))
-            model.load_weights(self.weight_file)
+
         return model
 
 

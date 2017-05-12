@@ -7,6 +7,7 @@ from sklearn.metrics import confusion_matrix, recall_score, precision_score, f1_
 from image_tools import get_discrete_sliding_window_boxes, compress_as_label, \
     predict_complete, crop_image, normalize_image_channelwise
 
+from models import fcn8_vgg
 
 class Sliding_window_evl:
     """ Evaluation the model using sliding window
@@ -143,10 +144,16 @@ class Sliding_window_evl:
 if __name__ == "__main__":
 
     # load the model
-    json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_252.json', 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    model = model_from_json(loaded_model_json)
+    # json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_252.json', 'r')
+    # loaded_model_json = json_file.read()
+    # json_file.close()
+    # model = model_from_json(loaded_model_json)
+
+    block_size = 240
+    model = fcn8_vgg.Fcn_8(batch_size=1, input_shape=(block_size,block_size), n_channels=3, no_classes=11)
+    model = model.build_model()
+
+
     model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.09/weights_best.hdf5")
 
     # load image

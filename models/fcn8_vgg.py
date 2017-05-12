@@ -1,19 +1,8 @@
 from keras.engine import Input
 from keras.engine import Model
 from keras.layers import Convolution2D, MaxPooling2D, Deconvolution2D, Dropout, Activation, Reshape
-from keras.backend import set_image_dim_ordering
 from keras.layers import merge
 
-from objectdetection.dataset.image_dataset import ImageDataset
-from objectdetection import callbacks
-
-from keras.optimizers import Adam
-from keras.backend import set_image_dim_ordering
-from keras.models import model_from_json
-from keras.models import load_model
-from keras.callbacks import (ModelCheckpoint, EarlyStopping, LearningRateScheduler, TensorBoard)
-
-from objectdetection.utils import logger
 
 
 class Fcn_8(object):

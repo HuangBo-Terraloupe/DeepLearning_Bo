@@ -47,25 +47,39 @@ class Show_evl:
 if __name__ == "__main__":
 
     # model
-    json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_252.json', 'r')
+    json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_540.json', 'r')
     # json_file = open("model.json",'r')
     loaded_model_json = json_file.read()
     json_file.close()
     model = model_from_json(loaded_model_json)
-    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.09/weights_best.hdf5")
+    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.10/weights_best.hdf5")
 
-    # images
-    dataset_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/nordhorn_2.yml"
-    with open(dataset_file) as fp:
-        spec = yaml.load(fp.read())
+    # # images
+    # dataset_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/nordhorn_2.yml"
+    # with open(dataset_file) as fp:
+    #     spec = yaml.load(fp.read())
+    #
+    # nb_samples = len(spec["validation"]["images"])
+    #
+    # index = np.random.randint(0, nb_samples)
+    # print "the index is", index
+    #
+    # evl_image = spec["validation"]["images"][index]
+    # evl_image = misc.imread(evl_image)
 
-    nb_samples = len(spec["validation"]["images"])
+    mypath = "/home/huangbo/HuangBo_Projects/data/nordhorn/images_evl"
 
-    index = np.random.randint(0, nb_samples)
+    f = open("/home/huangbo/objectdetection/objectdetection/huangbo_ws/evaluation.txt")
+    lines = f.readlines()
+
+    index = np.random.randint(0,len(lines))
     print "the index is", index
 
-    evl_image = spec["validation"]["images"][index]
+    #index = 1501
+    evl_image = mypath + "/" + lines[index][0:15]
     evl_image = misc.imread(evl_image)
 
+
     show_image = Show_evl(model,evl_image)
-    show_image.evl_sliding(box_size=252)
+    #show_image.evl_sliding(box_size=540)
+    show_image.evl_complete()
