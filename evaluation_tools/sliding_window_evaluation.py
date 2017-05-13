@@ -150,11 +150,6 @@ if __name__ == "__main__":
     json_file.close()
     model = model_from_json(loaded_model_json)
 
-    #from models import fcn8_vgg
-    # block_size = 240
-    # model = fcn8_vgg.Fcn_8(batch_size=1, input_shape=(block_size,block_size), n_channels=3, no_classes=11)
-    # model = model.build_model()
-
 
     model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.11_unet_540/weights_end.hdf5")
 
