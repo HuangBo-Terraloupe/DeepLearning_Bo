@@ -47,12 +47,17 @@ class Show_evl:
 if __name__ == "__main__":
 
     # model
-    json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_540.json', 'r')
-    # json_file = open("model.json",'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    model = model_from_json(loaded_model_json)
-    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.10/weights_best.hdf5")
+    # json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_540.json', 'r')
+    # # json_file = open("model.json",'r')
+    # loaded_model_json = json_file.read()
+    # json_file.close()
+    # model = model_from_json(loaded_model_json)
+    # model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.10/weights_best.hdf5")
+
+    from models import fcn8_vgg
+    model = fcn8_vgg.Fcn_8(batch_size=1, input_shape=(240,240), n_channels=3, no_classes=11)
+    model = model.build_model()
+    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/fcn_05.12_240/weights_end.hdf5")
 
     # # images
     # dataset_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/nordhorn_2.yml"

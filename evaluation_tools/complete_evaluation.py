@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from scipy import misc
 from keras.models import model_from_json, load_model
+from keras.backend import set_image_dim_ordering
+from data_sets.image_dataset import ImageDataset
 from sklearn.metrics import confusion_matrix, recall_score, precision_score, f1_score, accuracy_score
 from image_tools import get_discrete_sliding_window_boxes, compress_as_label, \
     predict_complete, crop_image, normalize_image_channelwise
@@ -35,16 +37,27 @@ class Complete_evl:
 
     def complete_evaluation(self, dataset_file, labels_index):
 
+        image_dataset = ImageDataset(dataset_file,
+                                     image_blocksize=(self.block_size, self.block_size),
+                                     label_blocksize=(self.block_size, self.block_size),
+                                     normalize=False,
+                                     use_channels=(0, 1, 2)
+                                     )
+
+        validation_generator = image_dataset.batch_data_generator(1, 'validation', sampling_method='random')
+
+
         with open(dataset_file) as fp:
             spec = yaml.load(fp.read())
 
         nb_samples = len(spec["validation"]["images"])
-        cm = np.zeros(shape=(self.nb_classes, self.nb_classes))
+        nb_samples_ = nb_samples*2180*3335/(self.block_size*self.block_size)
+        print "the number of samples for evl",nb_samples_
 
-        for i in range(nb_samples):
+        cm = np.zeros(shape=(self.nb_classes, self.nb_classes))
+        for i in range(nb_samples_):
             print "-----deal with the" + " "+ str(i) + " " + 'image-------'
-            image2evl = misc.imread(spec["validation"]["images"][i])
-            labels = misc.imread(spec["validation"]["labels"][i])
+            image2evl, labels = validation_generator.next()
 
             cm_new = self.evluation_single(image2evl, labels)
             cm = cm + cm_new
@@ -97,15 +110,16 @@ class Complete_evl:
         return cm, accuracy, pd.DataFrame(dic_report, index=labels_index)
 
 if __name__ == "__main__":
+    set_image_dim_ordering('tf')
 
     #load the model
-    json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_252.json', 'r')
+    json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_540.json', 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     model = model_from_json(loaded_model_json)
 
 
-    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.11_unet_540/weights_end.hdf5")
+    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.11_unet_540/weights_best.hdf5")
 
     # load image
     dataset_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/nordhorn_2.yml"

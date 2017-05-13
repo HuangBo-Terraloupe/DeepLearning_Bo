@@ -77,11 +77,11 @@ class Fcn_8(object):
         conv5_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='conv5_out')(conv5_3)
 
         # Block 6
-        conv6_1 = Convolution2D(1024, 7, 7, activation='relu', border_mode='same', name='conv6_1')(conv5_out)
+        conv6_1 = Convolution2D(4096, 7, 7, activation='relu', border_mode='same', name='conv6_1')(conv5_out)
         conv6_out = Dropout(0.5)(conv6_1)
 
         # Block 7
-        conv7_1 = Convolution2D(1024, 1, 1, activation='relu', border_mode='same', name='conv7_1')(conv6_out)
+        conv7_1 = Convolution2D(4096, 1, 1, activation='relu', border_mode='same', name='conv7_1')(conv6_out)
         conv7_out = Dropout(0.5)(conv7_1)
 
         # De1
