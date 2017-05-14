@@ -2,62 +2,48 @@ import yaml
 import numpy as np
 import pandas as pd
 from scipy import misc
-from keras.models import model_from_json, load_model
+from keras.models import model_from_json
 from keras.backend import set_image_dim_ordering
-from data_sets.image_dataset import ImageDataset
-from sklearn.metrics import confusion_matrix, recall_score, precision_score, f1_score, accuracy_score
-from image_tools import get_discrete_sliding_window_boxes, compress_as_label, \
-    predict_complete, crop_image, normalize_image_channelwise
+from sklearn.metrics import confusion_matrix
+from image_tools import  compress_as_label, predict_complete,  normalize_image_channelwise
 
 
 
 class Complete_evl:
 
-    def __init__(self, model, block_size, nb_classes):
+    def __init__(self, model, nb_classes):
         self.model = model
-        self.block_size = block_size
         self.nb_classes = nb_classes
 
 
     def evluation_single(self, image, label):
 
-        prediction = self.model.predict(image)
-
-        prediction = prediction.reshape(self.block_size * self.block_size, 11)
-        label = label.reshape(self.block_size * self.block_size, 11)
-
-
+        normal_image = normalize_image_channelwise(image)
+        prediction = predict_complete(self.model, normal_image)
         prediction = compress_as_label(prediction)
-        label = compress_as_label(label)
 
+        label = label.flatten()
+        prediction = prediction.flatten()
 
-        cm = confusion_matrix(y_true=prediction, y_pred=label, labels=range(11))
+        cm = confusion_matrix(y_true=prediction, y_pred=label, labels=range(self.nb_classes))
 
         return cm
 
     def complete_evaluation(self, dataset_file, labels_index):
 
-        image_dataset = ImageDataset(dataset_file,
-                                     image_blocksize=(self.block_size, self.block_size),
-                                     label_blocksize=(self.block_size, self.block_size),
-                                     normalize=False,
-                                     use_channels=(0, 1, 2)
-                                     )
-
-        validation_generator = image_dataset.batch_data_generator(1, 'validation', sampling_method='random')
-
-
         with open(dataset_file) as fp:
             spec = yaml.load(fp.read())
 
         nb_samples = len(spec["validation"]["images"])
-        nb_samples_ = nb_samples*2180*3335/(self.block_size*self.block_size)
-        print "the number of samples for evl",nb_samples_
+
+        print "the number of evaluation samples are:", nb_samples
 
         cm = np.zeros(shape=(self.nb_classes, self.nb_classes))
-        for i in range(nb_samples_):
+        for i in range(nb_samples):
             print "-----deal with the" + " "+ str(i) + " " + 'image-------'
-            image2evl, labels = validation_generator.next()
+
+            image2evl = misc.imread(spec["validation"]["images"][i])
+            labels = misc.imread(spec["validation"]["labels"][i])
 
             cm_new = self.evluation_single(image2evl, labels)
             cm = cm + cm_new
@@ -119,7 +105,7 @@ if __name__ == "__main__":
     model = model_from_json(loaded_model_json)
 
 
-    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.11_unet_540/weights_best.hdf5")
+    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.13_unet_540/weights_end.hdf5")
 
     # load image
     dataset_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/nordhorn_2.yml"
@@ -130,7 +116,7 @@ if __name__ == "__main__":
                                               'fallow land', 'sand / rock']
 
     # create the object
-    unet_evl = Complete_evl(model=model, block_size=540, nb_classes=11)
+    unet_evl = Complete_evl(model=model, nb_classes=11)
     cm, total_acc, report = unet_evl.complete_evaluation(dataset_file,index)
     print "The confusion matrix:", cm
     print "The total acc is:", total_acc

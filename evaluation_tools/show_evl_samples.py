@@ -1,3 +1,6 @@
+from os import listdir
+from os.path import isfile, join
+
 import yaml
 import numpy as np
 import matplotlib.pyplot as plt
@@ -47,17 +50,13 @@ class Show_evl:
 if __name__ == "__main__":
 
     # model
-    # json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_540.json', 'r')
-    # # json_file = open("model.json",'r')
-    # loaded_model_json = json_file.read()
-    # json_file.close()
-    # model = model_from_json(loaded_model_json)
-    # model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.10/weights_best.hdf5")
+    json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_540.json', 'r')
+    # json_file = open("model.json",'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    model = model_from_json(loaded_model_json)
+    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.13_unet_540/weights_best.hdf5")
 
-    from models import fcn8_vgg
-    model = fcn8_vgg.Fcn_8(batch_size=1, input_shape=(240,240), n_channels=3, no_classes=11)
-    model = model.build_model()
-    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/fcn_05.12_240/weights_end.hdf5")
 
     # # images
     # dataset_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/nordhorn_2.yml"
@@ -72,19 +71,23 @@ if __name__ == "__main__":
     # evl_image = spec["validation"]["images"][index]
     # evl_image = misc.imread(evl_image)
 
-    mypath = "/home/huangbo/HuangBo_Projects/data/nordhorn/images_evl"
 
-    f = open("/home/huangbo/objectdetection/objectdetection/huangbo_ws/evaluation.txt")
-    lines = f.readlines()
+    mypath = "/home/huangbo/HuangBo_Projects/data/nordhorn/building_images/"
+    image_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
-    index = np.random.randint(0,len(lines))
-    print "the index is", index
-
-    #index = 1501
-    evl_image = mypath + "/" + lines[index][0:15]
-    evl_image = misc.imread(evl_image)
+    for image in image_files:
 
 
-    show_image = Show_evl(model,evl_image)
-    #show_image.evl_sliding(box_size=540)
-    show_image.evl_complete()
+    # f = open("/home/huangbo/objectdetection/objectdetection/huangbo_ws/evaluation.txt")
+    # lines = f.readlines()
+    #
+    # index = np.random.randint(0,len(lines))
+    # print "the index is", index
+    #
+    # #index = 1501
+        evl_image = mypath + image
+        evl_image = misc.imread(evl_image)
+
+        show_image = Show_evl(model,evl_image)
+        #show_image.evl_sliding(box_size=540)
+        show_image.evl_complete()
