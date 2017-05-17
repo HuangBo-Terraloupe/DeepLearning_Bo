@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from scipy import misc
 
 from keras.models import model_from_json, load_model
-from image_tools import compress_as_label,normalize_image_channelwise,predict_single,predict_complete
+from image_tools import compress_as_label,normalize_image_channelwise,predict_single,predict_complete, crop_image
 from sliding_window_evaluation import Sliding_window_evl
 
 class Show_evl:
@@ -36,6 +36,8 @@ class Show_evl:
 
         sl_evl = Sliding_window_evl(self.model, box_size)
         prediction = sl_evl.evluation_single(self.image)
+        crop_shape = prediction.shape
+        self.image = crop_image(image=self.image, crop_size=crop_shape, offset=(box_size / 4, box_size / 4))
 
         fig = plt.figure()
         fig.add_subplot(1,2,1)
@@ -55,7 +57,7 @@ if __name__ == "__main__":
     loaded_model_json = json_file.read()
     json_file.close()
     model = model_from_json(loaded_model_json)
-    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.13_unet_540/weights_best.hdf5")
+    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.15_unet_540/weights_best.hdf5")
 
 
     # # images
@@ -77,17 +79,20 @@ if __name__ == "__main__":
 
     for image in image_files:
 
-
-    # f = open("/home/huangbo/objectdetection/objectdetection/huangbo_ws/evaluation.txt")
-    # lines = f.readlines()
-    #
-    # index = np.random.randint(0,len(lines))
-    # print "the index is", index
-    #
-    # #index = 1501
         evl_image = mypath + image
         evl_image = misc.imread(evl_image)
 
         show_image = Show_evl(model,evl_image)
         #show_image.evl_sliding(box_size=540)
         show_image.evl_complete()
+
+    # nb_images = len(image_files)
+    #
+    # for i in range(nb_images):
+    #
+    #     evl_image = mypath + image_files[i+10]
+    #     evl_image = misc.imread(evl_image)
+    #
+    #     show_image = Show_evl(model,evl_image)
+    #     show_image.evl_sliding(box_size=540)
+    #     #show_image.evl_complete()

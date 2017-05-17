@@ -72,6 +72,8 @@ class Sliding_window_evl:
         nb_samples = len(spec["validation"]["images"])
         cm = np.zeros(shape=(nb_classes, nb_classes))
 
+        print "The number of evaluation sampels is:", nb_samples
+
         for i in range(nb_samples):
             print "-----deal with the" + " "+ str(i) + " " + 'image-------'
             image2evl = misc.imread(spec["validation"]["images"][i])
@@ -151,7 +153,7 @@ if __name__ == "__main__":
     model = model_from_json(loaded_model_json)
 
 
-    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.13_unet_540/weights_end.hdf5")
+    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.11_unet_540/weights_best.hdf5")
 
     # load image
     dataset_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/nordhorn_2.yml"

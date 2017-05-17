@@ -1,60 +1,43 @@
-import pickle
+import yaml
 import numpy as np
 from scipy import misc
 from PIL import Image
-import numpy as np
-
-# save_label = "/home/huangbo/HuangBo_Projects/nordhorn/geo_json/"
-#
-# file = open("labeled_data.txt")
-# lines = file.readlines()
-#
-# for i in range(700):
-#     image = misc.imread(save_label+ lines[10][0:-4]+"tif")
-#
-#     print np.max(image)
-
-import pickle
-class_weights = pickle.load(open('class_weights', 'r'))
-print class_weights
-
-weights_list = [4,3,3,6,7,1,4,1,3,1,3]
 
 
 
-for i in range(11):
-    print str(i), class_weights[str(i)]
+weights_list = [1,8,8,12,14,1,2,1,2,1,2]
 
-path_label = "/home/huangbo/HuangBo_Projects/data/nordhorn/labels/"
-save_label = "/home/huangbo/HuangBo_Projects/nordhorn/geo_json"
+with open("/home/huangbo/nordhorn_total.yml") as fp:
+    spec = yaml.load(fp.read())
 
-file = open("labeled_data.txt")
-lines = file.readlines()
-nb = len(lines)
+    nb_samples = len(spec["training"]["labels"])
+    print "nb_samples:", nb_samples
+    # print spec["training"]["images"][0][-15:-3]
+    # print spec["training"]["labels"][0][-15:]
 
-
-for i in range(nb):
-
-    print "the index of image:", i
-    image = misc.imread(path_label + lines[i][0:-1])
-    image = np.matrix(image, dtype=float)
-    print "the original image:", path_label + lines[i][0:-1]
-    for j in range(11):
-        np.place(image, image == j, class_weights[str(j)])
-
-    print "the maximal value of is :", np.max(image)
+    path_label = "/home/huangbo/HuangBo_Projects/data/nordhorn/masks/"
+    save_label = "/home/huangbo/HuangBo_Projects/data/nordhorn/geo_json_new"
 
 
 
+    for i in range(nb_samples):
 
-    length = image.shape[0]*image.shape[1]
-    nb_zero = np.count_nonzero(image)
+        print "the index of image:", i
+        image = misc.imread(spec["training"]["labels"][i])
+        image = np.matrix(image, dtype=float)
+        print "the original image:", spec["training"]["labels"][i]
+        for j in range(11):
+            np.place(image, image == j, weights_list[j])
 
-    if length!=nb_zero:
-        print "there is a zero in image"
-        break
+        print "the maximal value of is :", np.max(image)
 
-    print "the transfer image:", "/geo_json/" + lines[i][-16:-4]+"tif"
-    im = Image.fromarray(image)
-    im.save("geo_json/" + lines[i][0:-4]+"tif")
+        length = image.shape[0]*image.shape[1]
+        nb_zero = np.count_nonzero(image)
 
+        if length!=nb_zero:
+            print "there is a zero in image"
+            break
+
+        print "the transfer image:", save_label + spec["training"]["labels"][i][-15:-3] +"tif"
+        im = Image.fromarray(image)
+        im.save(save_label + spec["training"]["labels"][i][-15:-3] +"tif")
