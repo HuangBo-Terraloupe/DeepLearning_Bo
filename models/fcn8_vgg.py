@@ -40,14 +40,14 @@ class Fcn_8(object):
             input)
         conv1_2 = Convolution2D(64, fileter_size, fileter_size, activation='relu', border_mode='same', name='conv1_2')(
             conv1_1)
-        conv1_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='conv1_out')(conv1_2)
+        conv1_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='pool1')(conv1_2)
 
         # Block 2
         conv2_1 = Convolution2D(128, fileter_size, fileter_size, activation='relu', border_mode='same', name='conv2_1')(
             conv1_out)
         conv2_2 = Convolution2D(128, fileter_size, fileter_size, activation='relu', border_mode='same', name='conv2_2')(
             conv2_1)
-        conv2_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='conv2_out')(conv2_2)
+        conv2_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='pool2')(conv2_2)
 
         # Block 3
         conv3_1 = Convolution2D(256, fileter_size, fileter_size, activation='relu', border_mode='same', name='conv3_1')(
@@ -56,7 +56,7 @@ class Fcn_8(object):
             conv3_1)
         conv3_3 = Convolution2D(256, fileter_size, fileter_size, activation='relu', border_mode='same', name='conv3_3')(
             conv3_2)
-        conv3_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='conv3_out')(conv3_3)
+        conv3_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='pool3')(conv3_3)
 
         # Block 4
         conv4_1 = Convolution2D(512, fileter_size, fileter_size, activation='relu', border_mode='same', name='conv4_1')(
@@ -65,7 +65,7 @@ class Fcn_8(object):
             conv4_1)
         conv4_3 = Convolution2D(512, fileter_size, fileter_size, activation='relu', border_mode='same', name='conv4_3')(
             conv4_2)
-        conv4_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='conv4_out')(conv4_3)
+        conv4_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='pool4')(conv4_3)
 
         # Block 5
         conv5_1 = Convolution2D(512, fileter_size, fileter_size, activation='relu', border_mode='same', name='conv5_1')(
@@ -74,7 +74,7 @@ class Fcn_8(object):
             conv5_1)
         conv5_3 = Convolution2D(512, fileter_size, fileter_size, activation='relu', border_mode='same', name='conv5_3')(
             conv5_2)
-        conv5_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='conv5_out')(conv5_3)
+        conv5_out = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), border_mode='same', name='pool5')(conv5_3)
 
         # Block 6
         conv6_1 = Convolution2D(4096, 7, 7, activation='relu', border_mode='same', name='conv6_1')(conv5_out)
@@ -116,3 +116,14 @@ class Fcn_8(object):
 
         return model
 
+
+
+# model = Fcn_8(batch_size=1, input_shape=(480,480), n_channels=3, no_classes=11)
+# model = model.build_model()
+# #print model.summary()
+#
+# for layer in model.layers:
+#     layer_configuration = layer.get_config()
+#     print "layer name is", layer_configuration["name"]
+#     print "the input shape", layer.input_shape
+#     print "the output shape", layer.output_shape

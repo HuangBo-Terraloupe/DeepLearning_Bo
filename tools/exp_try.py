@@ -24,14 +24,17 @@ def outFromIn(conv, layerIn):
     j_in = layerIn[1]
     r_in = layerIn[2]
     start_in = layerIn[3]
+
     k = conv[0]
     s = conv[1]
     p = conv[2]
 
     n_out = math.floor((n_in - k + 2 * p) / s) + 1
     actualP = (n_out - 1) * s - n_in + k
-    pR = math.ceil(actualP / 2)
+    #print "the padding is", actualP
+    #pR = math.ceil(actualP / 2)
     pL = math.floor(actualP / 2)
+
 
     j_out = j_in * s
     r_out = r_in + (k - 1) * j_in
@@ -55,6 +58,7 @@ if __name__ == '__main__':
         currentLayer = outFromIn(convnet[i], currentLayer)
         layerInfos.append(currentLayer)
         printLayer(currentLayer, layer_names[i])
+
     print ("------------------------")
     layer_name = raw_input("Layer name where the feature in: ")
     layer_idx = layer_names.index(layer_name)
@@ -65,8 +69,8 @@ if __name__ == '__main__':
     j = layerInfos[layer_idx][1]
     r = layerInfos[layer_idx][2]
     start = layerInfos[layer_idx][3]
-    assert (idx_x < n)
-    assert (idx_y < n)
+    assert (idx_x < n),"the index must smaller than number of features in this layer"
+    assert (idx_y < n),"the index must smaller than number of features in this layer"
 
     print ("receptive field: (%s, %s)" % (r, r))
     print ("center: (%s, %s)" % (start + idx_x * j, start + idx_y * j))

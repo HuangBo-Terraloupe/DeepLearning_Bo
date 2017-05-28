@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from itertools import product
 from scipy import misc
 
@@ -214,4 +215,29 @@ def predict_complete(model, img_data):
             out_response[x:x + patch_size[0], y:y + patch_size[1], :] = np.maximum(
                 out_response[x:x + patch_size[0], y:y + patch_size[1], :], response_map)
     return out_response
+
+
+def discrete_matshow(data , nb_classes, label_dic):
+    '''
+    This function to show the output of segmentation with legend
+    :param data: the segmentation output of cnn
+    :param nb_classes: number of classes
+    :param label_dic: the name of label, is a list and the position is proportional to the pixel values
+    :return: None, plot the label with legend
+    '''
+
+    # define the colormap
+    cmap = plt.cm.jet
+    # extract all colors from the .jet map
+    cmaplist = [cmap(i) for i in range(cmap.N)]
+    cmap = cmap.from_list('Custom cmap', cmaplist, cmap.N)
+    #cmap = plt.get_cmap('RdBu', nb_classes)
+
+    bounds = np.linspace(0, nb_classes, nb_classes+1)
+
+    mat = plt.matshow(data, cmap=cmap)
+    cax = plt.colorbar(mat, spacing='proportional', ticks=np.arange(nb_classes), boundaries=bounds)
+
+    cax.ax.set_yticklabels(label_dic)
+    plt.show()
 

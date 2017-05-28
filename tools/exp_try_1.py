@@ -36,7 +36,9 @@ if __name__ == '__main__':
 
     for i in range(len(convnet)):
         currentLayer = RF_calculation(convnet[i], currentLayer)
+        layerInfos.append(currentLayer)
         printLayer(currentLayer, layer_names[i])
+
 
     print ("--------------------------------------------------------------------")
     layer_name = raw_input("Layer name where the feature in: ")

@@ -39,13 +39,14 @@ class Show_evl:
         crop_shape = prediction.shape
         self.image = crop_image(image=self.image, crop_size=crop_shape, offset=(box_size / 4, box_size / 4))
 
-        fig = plt.figure()
+        fig = plt.figure(1)
         fig.add_subplot(1,2,1)
         plt.imshow(self.image)
 
+
+
         fig.add_subplot(1,2,2)
         plt.imshow(prediction)
-
         plt.show()
 
 
@@ -57,7 +58,7 @@ if __name__ == "__main__":
     loaded_model_json = json_file.read()
     json_file.close()
     model = model_from_json(loaded_model_json)
-    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.15_unet_540/weights_best.hdf5")
+    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.11_unet_540/weights_best.hdf5")
 
 
     # # images
@@ -74,25 +75,20 @@ if __name__ == "__main__":
     # evl_image = misc.imread(evl_image)
 
 
-    mypath = "/home/huangbo/HuangBo_Projects/data/nordhorn/building_images/"
-    image_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    mypath = "/home/huangbo/HuangBo_Projects/data/nordhorn/images_subset/"
+    image = "19_0285_1x2.jpg"
+    #image_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
-    for image in image_files:
+    # image_file = "/home/huangbo/nordhorn_w2.yml"
+    # with open(image_file) as fp:
+    #     spec = yaml.load(fp.read())
 
-        evl_image = mypath + image
-        evl_image = misc.imread(evl_image)
-
-        show_image = Show_evl(model,evl_image)
-        #show_image.evl_sliding(box_size=540)
-        show_image.evl_complete()
-
-    # nb_images = len(image_files)
+    # for image in image_files:
     #
-    # for i in range(nb_images):
-    #
-    #     evl_image = mypath + image_files[i+10]
-    #     evl_image = misc.imread(evl_image)
-    #
-    #     show_image = Show_evl(model,evl_image)
-    #     show_image.evl_sliding(box_size=540)
-    #     #show_image.evl_complete()
+    evl_image = mypath + image
+    evl_image = misc.imread(evl_image)
+
+    show_image = Show_evl(model,evl_image)
+    show_image.evl_sliding(box_size=540)
+    #show_image.evl_complete()
+
