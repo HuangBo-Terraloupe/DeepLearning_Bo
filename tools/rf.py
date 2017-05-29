@@ -219,14 +219,14 @@ class Receptive_field:
     #     return None
 
 
-model = fcn8_vgg.Fcn_8(batch_size=1, input_shape=(480,480), n_channels=3, no_classes=11)
-model = model.build_model()
+# model = fcn8_vgg.Fcn_8(batch_size=1, input_shape=(480,480), n_channels=3, no_classes=11)
+# model = model.build_model()
 # print model.summary()
 
 
-# detector = unet.UNet(batch_size=1, input_shape=(252, 252), n_channels = 3, no_classes=10, weight_file=None)
-# model = detector.build_model()
-# print model.summary()
+detector = unet.UNet(batch_size=1, input_shape=(252, 252), n_channels = 3, no_classes=10, weight_file=None)
+model = detector.build_model()
+print model.summary()
 
 
 rf = Receptive_field(model)
