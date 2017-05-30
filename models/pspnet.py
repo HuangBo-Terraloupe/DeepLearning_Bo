@@ -9,17 +9,18 @@ Example:
 from __future__ import print_function
 
 import keras.backend as backend
+from keras.backend import set_image_dim_ordering
 from keras.layers import Activation, Reshape, Permute
 from keras.layers import BatchNormalization, Dropout
 from keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, AveragePooling2D, UpSampling2D
 from keras.layers import merge, Input
 from keras.models import Model
 
-from objectdetection.utils import logger
+#from objectdetection.utils import logger
 from resnet import conv_block, identity_block
 
 
-def construct(input_shape, n_labels, n_channels=3, batch_size=None, weights_path=None):
+def construct(input_shape, n_labels, n_channels=3, batch_size=None):#weights_path=None):
     """ Constructs 50 layers PSPNet with pyramid scale pooling
 
     Args:
@@ -131,8 +132,17 @@ def construct(input_shape, n_labels, n_channels=3, batch_size=None, weights_path
 
     model = Model(img_input, x)
 
-    if weights_path:
-        logger.info("Loading pretrained weights from '%s'" % weights_path)
-        model.load_weights(weights_path)
+    # if weights_path:
+    #     logger.info("Loading pretrained weights from '%s'" % weights_path)
+    #     model.load_weights(weights_path)
 
     return model
+
+
+if __name__ == '__main__':
+    set_image_dim_ordering('tf')
+    block_size = 240
+
+    model = construct(input_shape= (block_size, block_size), n_labels = 11, n_channels=3, batch_size=1)
+    #model.loss_weights()
+    print  (model.summary())

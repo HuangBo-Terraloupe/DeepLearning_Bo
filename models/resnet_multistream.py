@@ -8,10 +8,10 @@ from keras.layers import merge, Input
 from keras.models import Model
 from keras.backend import set_image_dim_ordering
 
-from objectdetection.utils import logger
+#from objectdetection.utils import logger
 from resnet import conv_block, identity_block
 
-def construct(input_shape, n_labels, n_channels=3, batch_size=None, weights_path=None):
+def construct(input_shape, n_labels, n_channels=3, batch_size=None): #, weights_path=None):
     """ Constructs 50 layers resnet model with multi-stream feature aggregation.
         Model has a 496X496 pixel field of view
 
@@ -76,24 +76,22 @@ def construct(input_shape, n_labels, n_channels=3, batch_size=None, weights_path
 
     model = Model(img_input, x)
 
-    if weights_path:
-        logger.info("Loading pretrained weights from '%s'" % weights_path)
-        model.load_weights(weights_path)
+    # if weights_path:
+    #     logger.info("Loading pretrained weights from '%s'" % weights_path)
+    #     model.load_weights(weights_path)
 
     return model
 
 
-#
-# set_image_dim_ordering('tf')
-#
-# block_size = 496
-# model = construct(input_shape = (block_size, block_size), n_labels=11, n_channels=3, batch_size=1, weights_path=None)
-# print model.summary()
-#
-# for layer in model.layers:
-#     layer_configuration = layer.get_config()
-#
-#     try:
-#         print layer_configuration["padding"]
-#     except:
-#         continue
+if __name__ == '__main__':
+
+    set_image_dim_ordering('tf')
+    block_size = 496
+    model = construct(input_shape = (block_size, block_size), n_labels=11, n_channels=3, batch_size=1)
+    print model.summary()
+    n =0
+    for layer in model.layers:
+        n = n+1
+        layer_configuration = layer.get_config()
+
+    print n

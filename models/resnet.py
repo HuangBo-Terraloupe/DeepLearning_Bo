@@ -90,6 +90,7 @@ def conv_block(input_tensor, kernel_size, filters, stage, block, strides=(2, 2),
                              name=conv_name_base + '1', bias=False, init='he_normal')(input_tensor)
     shortcut = BatchNormalization(axis=bn_axis, name=bn_name_base + '1')(shortcut)
 
+
     x = merge([x, shortcut], mode='sum')
     x = Activation('relu')(x)
     return x
