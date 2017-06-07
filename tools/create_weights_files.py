@@ -3,8 +3,6 @@ import numpy as np
 from scipy import misc
 from PIL import Image
 
-
-
 weights_list = [1,8,8,12,14,1,2,1,2,1,2]
 
 with open("/home/huangbo/nordhorn_total.yml") as fp:
@@ -16,7 +14,7 @@ with open("/home/huangbo/nordhorn_total.yml") as fp:
     # print spec["training"]["labels"][0][-15:]
 
     path_label = "/home/huangbo/HuangBo_Projects/data/nordhorn/masks/"
-    save_label = "/home/huangbo/HuangBo_Projects/data/nordhorn/geo_json_new"
+    save_label = "/home/huangbo/HuangBo_Projects/data/nordhorn/weights/"
 
 
 
