@@ -8,6 +8,33 @@ from image_tools import get_discrete_sliding_window_boxes, compress_as_label, \
     predict_complete, crop_image, normalize_image_channelwise
 
 
+def load_and_transfer(model_file, weights_file):
+    """ Transfer weights of a model trained on multiple GPU's to a model running on single GPU.
+
+    Args:
+        model_file : Non-Parallelized version of JSON model file
+        weights_file : Model weights saved in parallelized training
+    Returns: A keras model capable of running on single GPU
+
+    """
+    from keras.models import model_from_json
+    import h5py
+
+    model = model_from_json(open(model_file, "rb").read())
+    f = h5py.File(weights_file, mode='r')
+    w = f["model_weights"]["model_1"]
+    for i, layer in enumerate(model.layers):
+        layer_weights = layer.weights
+        weights_to_set = []
+        for params in layer_weights:
+            weight_name = params.name
+            saved_weights = w[weight_name].value
+            weights_to_set.append(saved_weights)
+        model.layers[i].set_weights(weights_to_set)
+
+    return model
+
+
 class Sliding_window_evl:
     """ Evaluation the model using sliding window
 
@@ -145,25 +172,20 @@ class Sliding_window_evl:
 if __name__ == "__main__":
 
 
-
     #load the model
-    json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_540.json', 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    model = model_from_json(loaded_model_json)
-
-
-    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.11_unet_540/weights_best.hdf5")
+    json_file = '/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_unet_252/model.json'
+    weights_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_unet_252/model.hdf5"
+    model = load_and_transfer(model_file=json_file, weights_file=weights_file)
 
     # load image
-    dataset_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/nordhorn_2.yml"
+    dataset_file = "/home/huangbo/HuangBo_Projects/data/nordhorn/nordhorn.yml"
 
     index = ['background', 'building', 'asphalt/concrete', 'railway',
                                               'cars', 'flat vegetation', 'bushes (medium vegetation)',
                                               'trees (high vegetation)', 'water',
                                               'fallow land', 'sand / rock']
 
-    unet_evl = Sliding_window_evl(model=model, box_size=540)
+    unet_evl = Sliding_window_evl(model=model, box_size=252)
     cm, total_acc, report =unet_evl.evluation_whole(dataset_file=dataset_file, nb_classes=11, labels_index=index)
 
     print "The confusion matrix:", cm

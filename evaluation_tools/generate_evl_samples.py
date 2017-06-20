@@ -1,13 +1,9 @@
 import numpy as np
-import yaml
-import os
 
 from os import listdir
 from os.path import isfile, join
 
-
 from scipy import misc
-#from skimage import transform
 from keras.models import model_from_json, load_model
 from image_tools import compress_as_label,normalize_image_channelwise,predict_single,predict_complete, \
     get_discrete_sliding_window_boxes, crop_image
@@ -142,7 +138,7 @@ for image in image_files:
     evl_image = mypath + image
     evl_image = misc.imread(evl_image)
 
-    sl_evl = Sliding_window_evl(evl_image, model, 32 * 10 + 220)
+    sl_evl = Sliding_window_evl(evl_image, model, 256)
     prediction = sl_evl.evluation()
     #
     # image_index = path + image[0:-3] + "tif"

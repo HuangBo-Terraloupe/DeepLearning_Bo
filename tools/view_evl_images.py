@@ -1,28 +1,25 @@
-import matplotlib.pyplot as plt
+import os
 from scipy import misc
-import numpy as np
-import yaml
+from os import listdir
+from os.path import isfile, join
+import matplotlib.pyplot as plt
 
+image_path = "/home/huangbo/HuangBo_Projects/data/nordhorn/dataset_500/images/"
+label_path = "/home/huangbo/HuangBo_Projects/data/nordhorn/dataset_500/labels/"
+weights_path = "/home/huangbo/HuangBo_Projects/data/nordhorn/dataset_500/weights/"
 
-dataset_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/nordhorn_2.yml"
+files = [f for f in listdir(image_path) if isfile(join(image_path, f))]
 
-with open(dataset_file) as fp:
-    spec = yaml.load(fp.read())
-
-nb = len(spec["validation"]["images"])
-
-for i in range(nb):
-
-    image1 = misc.imread(spec["validation"]["images"][i])
-    image2 = misc.imread(spec["validation"]["labels"][i])
-
-    print spec["validation"]["labels"][i]
+for item in files:
+    image = misc.imread(image_path + item)
+    label = misc.imread(label_path + item[0:-3] + "png")
 
     fig = plt.figure()
-    fig.add_subplot(1,2,1)
-    plt.imshow(image1)
+    fig.add_subplot(1, 2, 1)
+    plt.imshow(image)
 
-    fig.add_subplot(1,2,2)
-    plt.imshow(image2)
+    fig.add_subplot(1, 2, 2)
+    plt.imshow(label)
 
     plt.show()
+

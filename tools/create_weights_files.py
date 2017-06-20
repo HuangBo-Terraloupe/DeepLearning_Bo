@@ -1,3 +1,4 @@
+import cv2
 import yaml
 import numpy as np
 from scipy import misc
@@ -5,18 +6,15 @@ from PIL import Image
 
 weights_list = [1,8,8,12,14,1,2,1,2,1,2]
 
-with open("/home/huangbo/nordhorn_total.yml") as fp:
+with open("/home/huangbo/HuangBo_Projects/data/nordhorn/nordhorn_total.yml") as fp:
     spec = yaml.load(fp.read())
 
     nb_samples = len(spec["training"]["labels"])
     print "nb_samples:", nb_samples
-    # print spec["training"]["images"][0][-15:-3]
-    # print spec["training"]["labels"][0][-15:]
 
     path_label = "/home/huangbo/HuangBo_Projects/data/nordhorn/masks/"
     save_label = "/home/huangbo/HuangBo_Projects/data/nordhorn/weights/"
-
-
+    #save_label = "/home/huangbo/Desktop/"
 
     for i in range(nb_samples):
 
@@ -36,6 +34,9 @@ with open("/home/huangbo/nordhorn_total.yml") as fp:
             print "there is a zero in image"
             break
 
-        print "the transfer image:", save_label + spec["training"]["labels"][i][-15:-3] +"tif"
-        im = Image.fromarray(image)
-        im.save(save_label + spec["training"]["labels"][i][-15:-3] +"tif")
+        print "the transfer image:", save_label + spec["training"]["labels"][i][-15:-3] +"png"
+
+        cv2.imwrite(save_label + spec["training"]["labels"][i][-15:-3] +"png", image)
+        # im = Image.fromarray(image)
+        # im = im.convert('RGB')
+        # im.save(save_label + spec["training"]["labels"][i][-15:-3] +"png")
