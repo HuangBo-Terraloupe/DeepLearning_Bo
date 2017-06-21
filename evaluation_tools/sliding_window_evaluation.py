@@ -7,7 +7,6 @@ from sklearn.metrics import confusion_matrix, recall_score, precision_score, f1_
 from image_tools import get_discrete_sliding_window_boxes, compress_as_label, \
     predict_complete, crop_image, normalize_image_channelwise
 
-
 def load_and_transfer(model_file, weights_file):
     """ Transfer weights of a model trained on multiple GPU's to a model running on single GPU.
 
@@ -43,9 +42,10 @@ class Sliding_window_evl:
         box_size: the size of sliding window box, also equal to the input size of network
     """
 
-    def __init__(self, model, box_size):
+    def __init__(self, model, box_size, mean=None):
         self.model = model
         self.box_size = box_size
+        self.mean = mean
 
     def evluation_single(self, image):
 
@@ -69,7 +69,12 @@ class Sliding_window_evl:
                 img = crop_image(image=image, crop_size=(self.box_size, self.box_size),
                                  offset=(boxes_list[i + offset][0], boxes_list[i + offset][1]))
 
-                img_norm = normalize_image_channelwise(img)
+                if self.mean == None:
+                    img_norm = normalize_image_channelwise(img)
+
+                else:
+                    img = img - self.mean
+                    img = img / 255.
                 img_norm = np.expand_dims(img_norm, axis=0)
 
                 prediction = self.model.predict(img_norm)

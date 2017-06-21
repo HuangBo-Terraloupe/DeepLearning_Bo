@@ -17,10 +17,11 @@ from image_tools import compress_as_label,\
 
 
 class Sliding_window_evl:
-    def __init__(self, image, model, box_size):
+    def __init__(self, image, model, box_size, mean):
         self.image = image
         self.model = model
         self.box_size = box_size
+        self.mean = mean
 
     def prediction(self):
 
@@ -44,7 +45,12 @@ class Sliding_window_evl:
                 img = crop_image(image=self.image, crop_size=(self.box_size, self.box_size),
                                  offset=(boxes_list[i + offset][0], boxes_list[i + offset][1]))
 
-                img_norm = normalize_image_channelwise(img)
+                if self.mean == None:
+                    img_norm = normalize_image_channelwise(self.image)
+                else:
+                    img = img - self.mean
+                    img = img / 255.
+
                 img_norm = np.expand_dims(img_norm, axis=0)
 
                 prediction = self.model.predict(img_norm)
@@ -67,14 +73,21 @@ class Sliding_window_evl:
         return whole_image
 
 class Complete_prediction:
-    def __init__(self, model, image):
+    def __init__(self, model, image, mean=None):
 
         self.model = model
         self.image = image
-
+        self.mean = mean
 
     def prediction(self):
-        normal_image = normalize_image_channelwise(self.image)
+
+        if self.mean == None:
+            normal_image = normalize_image_channelwise(self.image)
+
+        else:
+            self.image = self.image - self.mean
+            self.image = self.image / 255.
+
         prediction = predict_complete(self.model, normal_image)
         prediction = compress_as_label(prediction)
 

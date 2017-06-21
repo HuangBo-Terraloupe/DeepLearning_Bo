@@ -181,6 +181,7 @@ def normalize_image_channelwise(image_data):
         normalized_img[..., i] = (channel_data - channel_data.mean()) / (channel_data.std() + 1e-9)
     return normalized_img
 
+
 def predict_single(model, img_patch):
     """
     Predicts the response maps of a single image map. Model should output the response map of same

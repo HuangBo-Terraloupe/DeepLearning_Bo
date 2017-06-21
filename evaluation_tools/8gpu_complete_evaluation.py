@@ -1,3 +1,4 @@
+import cv2
 import yaml
 import numpy as np
 import pandas as pd
@@ -5,33 +6,46 @@ from scipy import misc
 from keras.models import model_from_json
 from keras.backend import set_image_dim_ordering
 from sklearn.metrics import confusion_matrix
-from image_tools import  compress_as_label, predict_complete, normalize_image_channelwise
+from image_tools import  compress_as_label, normalize_image_channelwise
+from tools.load_and_transfer8GPU import load_and_transfer
 
-def load_and_transfer(model_file, weights_file):
-    """ Transfer weights of a model trained on multiple GPU's to a model running on single GPU.
 
-    Args:
-        model_file : Non-Parallelized version of JSON model file
-        weights_file : Model weights saved in parallelized training
-    Returns: A keras model capable of running on single GPU
-
+def predict_single(model, img_patch):
     """
-    from keras.models import model_from_json
-    import h5py
+    Predicts the response maps of a single image map. Model should output the response map of same
+    size as img_patch.
+    :param model: A keras model.
+    :param img_patch: Image patch of form (batch_size, h, w, channels).
+    :return:
+    """
+    patch_size = model.input_shape[1:3]
+    #img_patch_norm = normalize_image_channelwise(img_patch)
+    img_patch_norm = np.expand_dims(img_patch, 0)
+    response_map = model.predict(img_patch_norm)
+    return np.reshape(response_map.squeeze(), patch_size + (response_map.shape[-1],))
 
-    model = model_from_json(open(model_file, "rb").read())
-    f = h5py.File(weights_file, mode='r')
-    w = f["model_weights"]["model_1"]
-    for i, layer in enumerate(model.layers):
-        layer_weights = layer.weights
-        weights_to_set = []
-        for params in layer_weights:
-            weight_name = params.name
-            saved_weights = w[weight_name].value
-            weights_to_set.append(saved_weights)
-        model.layers[i].set_weights(weights_to_set)
+def predict_complete(model, img_data):
+    """
+    Predicts response map of image having size greater than model input. The response map for the
+     image is calculated by finding response maps for smaller overlapping images.
+    :param model: Model on which to run the predictions.
+    :param img_data: Image of shape (h, w, n_channels)
+    :return: Predicted response map
+    """
+    patch_size = model.input_shape[1:3]
+    step_size = (0.8 * np.array(patch_size)).astype(np.uint32)
+    # resolution of response map should be same as img_data and channels should be no of channel in model output.
+    out_response = np.zeros(img_data.shape[:2] + (model.output_shape[-1],))
+    for i in range(0, img_data.shape[0], step_size[0]):
+        x = img_data.shape[0] - patch_size[0] if i + patch_size[0] > img_data.shape[0] else i
+        for j in range(0, img_data.shape[1], step_size[1]):
+            y = img_data.shape[1] - patch_size[1] if j + patch_size[1] > img_data.shape[1] else j
+            response_map = predict_single(model, img_data[x:x + patch_size[0], y:y + patch_size[1], :])
+            out_response[x:x + patch_size[0], y:y + patch_size[1], :] = np.maximum(
+                out_response[x:x + patch_size[0], y:y + patch_size[1], :], response_map)
+    return out_response
 
-    return model
+
 
 class Complete_evl:
 
@@ -47,10 +61,10 @@ class Complete_evl:
             normal_image = normalize_image_channelwise(image)
 
         else :
-            image = image - self.mean
-            image = image / 255.
+            normal_image = image - self.mean
+            normal_image = normal_image / 255.
 
-        prediction = predict_complete(self.model, image)
+        prediction = predict_complete(self.model, normal_image)
         prediction = compress_as_label(prediction)
 
         label = label.flatten()
@@ -62,26 +76,23 @@ class Complete_evl:
 
     def complete_evaluation(self, dataset_file, labels_index):
 
-        with open(dataset_file) as fp:
-            spec = yaml.load(fp.read())
+        spec = yaml.load(open(dataset_file, "rb").read())
+        file_names = spec["validation"]["images"]
+        masks_names = spec["validation"]["labels"]
 
-        nb_samples = len(spec["validation"]["images"])
+        nb_samples = len(file_names)
 
         print "the number of evaluation samples are:", nb_samples
 
         cm = np.zeros(shape=(self.nb_classes, self.nb_classes))
-        for i in range(1):
+        for i in range(nb_samples):
             print "-----deal with the" + " "+ str(i) + " " + 'image-------'
 
-            image2evl = np.array(misc.imread(spec["validation"]["images"][i]), dtype=np.float32)[:, :, ::-1]
-            print image2evl.shape
-            image2evl -= self.mean
-            image2evl /= 255.
-
-            labels = np.array(misc.imread(spec["validation"]["labels"][i]), dtype=np.uint8)
-
-            cm_new = self.evluation_single(image2evl, labels)
+            image2evl = cv2.imread(file_names[i], cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)
+            label = np.array(misc.imread(masks_names[i]))
+            cm_new = self.evluation_single(image2evl, label)
             cm = cm + cm_new
+
 
         # total accuracy
         tp = np.trace(cm)
@@ -89,7 +100,6 @@ class Complete_evl:
         accuracy = tp / np.sum(cm)
 
         # recall and precision
-
         recall = np.zeros(self.nb_classes, dtype=float)
         precision = np.zeros(self.nb_classes, dtype=float)
         f1 = np.zeros(self.nb_classes, dtype=float)
@@ -133,15 +143,6 @@ class Complete_evl:
 if __name__ == "__main__":
     set_image_dim_ordering('tf')
 
-    # # model
-    # json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_540.json', 'r')
-    # # json_file = open("model.json",'r')
-    # loaded_model_json = json_file.read()
-    # json_file.close()
-    # model = model_from_json(loaded_model_json)
-    # model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.11_unet_540/weights_best.hdf5")
-
-
     #load the model
     json_file = '/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_resnet_256/model.json'
     weights_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_resnet_256/model.hdf5"
@@ -160,5 +161,3 @@ if __name__ == "__main__":
     print "The confusion matrix:", cm
     print "The total acc is:", total_acc
     print "The report:", report
-
-
