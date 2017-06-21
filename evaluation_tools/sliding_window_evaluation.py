@@ -73,10 +73,10 @@ class Sliding_window_evl:
                     img_norm = normalize_image_channelwise(img)
 
                 else:
-                    img = img - self.mean
-                    img = img / 255.
-                img_norm = np.expand_dims(img_norm, axis=0)
+                    img_norm = img - self.mean
+                    img_norm = img_norm / 255.
 
+                img_norm = np.expand_dims(img_norm, axis=0)
                 prediction = self.model.predict(img_norm)
                 prediction = compress_as_label(prediction)
                 prediction = np.reshape(prediction, (self.box_size, self.box_size))
@@ -122,6 +122,7 @@ class Sliding_window_evl:
 
             mat_new = confusion_matrix(y_true=prediction, y_pred=labels, labels=range(nb_classes))
             cm = cm + mat_new
+            break
 
         #print "The confusion matrix is:", cm
 
@@ -178,19 +179,19 @@ if __name__ == "__main__":
 
 
     #load the model
-    json_file = '/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_unet_252/model.json'
-    weights_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_unet_252/model.hdf5"
+    json_file = '/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_resnet_256/model.json'
+    weights_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_resnet_256/model.hdf5"
     model = load_and_transfer(model_file=json_file, weights_file=weights_file)
 
     # load image
-    dataset_file = "/home/huangbo/HuangBo_Projects/data/nordhorn/nordhorn.yml"
+    dataset_file = "/home/huangbo/HuangBo_Projects/data/nordhorn/dataset_500/nordhorn_home.yml"
 
     index = ['background', 'building', 'asphalt/concrete', 'railway',
                                               'cars', 'flat vegetation', 'bushes (medium vegetation)',
                                               'trees (high vegetation)', 'water',
                                               'fallow land', 'sand / rock']
 
-    unet_evl = Sliding_window_evl(model=model, box_size=252)
+    unet_evl = Sliding_window_evl(model=model, box_size=256, mean=[114.96066323, 116.50405346, 102.74354111])
     cm, total_acc, report =unet_evl.evluation_whole(dataset_file=dataset_file, nb_classes=11, labels_index=index)
 
     print "The confusion matrix:", cm

@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/evaluation_tools/sliding_window_evaluation.py" line="174" />
+    <bookmark url="file://$PROJECT_DIR$/evaluation_tools/sliding_window_evaluation.py" line="175" />
     <bookmark url="file://$PROJECT_DIR$/evaluation_tools/single_prediction.py" line="115" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4a130210-75fa-48b1-9883-4047d287c3fb" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/evaluation_tools/8gpu_sliding_window_evaluation.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/evaluation_tools/complete_evaluation.py" afterPath="$PROJECT_DIR$/evaluation_tools/complete_evaluation.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/evaluation_tools/image_tools.py" afterPath="$PROJECT_DIR$/evaluation_tools/image_tools.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/evaluation_tools/single_prediction.py" afterPath="$PROJECT_DIR$/evaluation_tools/single_prediction.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/evaluation_tools/8gpu_sliding_window_evaluation.py" afterPath="$PROJECT_DIR$/evaluation_tools/8gpu_sliding_window_evaluation.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/evaluation_tools/sliding_window_evaluation.py" afterPath="$PROJECT_DIR$/evaluation_tools/sliding_window_evaluation.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -61,9 +57,33 @@
       <file leaf-file-name="8gpu_sliding_window_evaluation.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/evaluation_tools/8gpu_sliding_window_evaluation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="231">
+              <caret line="153" column="0" lean-forward="true" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="8gpu_complete_evaluation.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/evaluation_tools/8gpu_complete_evaluation.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2127">
+              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="48" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sliding_window_evaluation.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/evaluation_tools/sliding_window_evaluation.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="321">
+              <caret line="179" column="0" lean-forward="true" selection-start-line="179" selection-start-column="0" selection-end-line="199" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -135,9 +155,9 @@
         <option value="$PROJECT_DIR$/tools/8gpu_to_one.py" />
         <option value="$PROJECT_DIR$/evaluation_tools/image_tools.py" />
         <option value="$PROJECT_DIR$/evaluation_tools/single_prediction.py" />
-        <option value="$PROJECT_DIR$/evaluation_tools/sliding_window_evaluation.py" />
         <option value="$PROJECT_DIR$/evaluation_tools/complete_evaluation.py" />
         <option value="$PROJECT_DIR$/evaluation_tools/8gpu_evaluation.py" />
+        <option value="$PROJECT_DIR$/evaluation_tools/sliding_window_evaluation.py" />
         <option value="$PROJECT_DIR$/evaluation_tools/8gpu_sliding_window_evaluation.py" />
       </list>
     </option>
@@ -542,7 +562,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1983" y="-4" width="1857" height="1084" extended-state="6" />
+    <frame x="1983" y="-4" width="1857" height="1084" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32916668" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -580,15 +600,21 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/evaluation_tools/sliding_window_evaluation.py</url>
+          <line>36</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="2" />
+      <option name="time" value="4" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/anaconda2/envs/keras/lib/python2.7/site-packages/keras/layers/__init__.py" />
     <entry file="file://$USER_HOME$/anaconda2/envs/keras/lib/python2.7/site-packages/keras/layers/convolutional.py" />
     <entry file="file://$USER_HOME$/.local/lib/python2.7/site-packages/numpy/core/function_base.py" />
     <entry file="file://$USER_HOME$/anaconda2/envs/keras/lib/python2.7/site-packages/nengo_dl/signals.py" />
@@ -796,16 +822,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/evaluation_tools/sliding_window_evaluation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="7" column="61" lean-forward="false" selection-start-line="7" selection-start-column="61" selection-end-line="7" selection-end-column="61" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/evaluation_tools/8gpu_evaluation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="87">
@@ -814,11 +830,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/evaluation_tools/8gpu_complete_evaluation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2127">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/evaluation_tools/sliding_window_evaluation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="321">
+          <caret line="179" column="0" lean-forward="true" selection-start-line="179" selection-start-column="0" selection-end-line="199" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/evaluation_tools/8gpu_sliding_window_evaluation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="231">
+          <caret line="153" column="0" lean-forward="true" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
