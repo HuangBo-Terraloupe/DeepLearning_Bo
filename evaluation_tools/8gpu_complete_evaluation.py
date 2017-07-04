@@ -89,7 +89,7 @@ class Complete_evl:
             print "-----deal with the" + " "+ str(i) + " " + 'image-------'
 
             image2evl = cv2.imread(file_names[i], cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)
-            label = np.array(misc.imread(masks_names[i]))
+            label = cv2.imread(masks_names[i], -1)
             cm_new = self.evluation_single(image2evl, label)
             cm = cm + cm_new
 

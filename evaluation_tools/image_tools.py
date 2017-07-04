@@ -218,13 +218,32 @@ def predict_complete(model, img_data):
     return out_response
 
 
-def discrete_matshow(data , nb_classes, label_dic):
+def discrete_matshow(image, nb_classes, label_dic):
     '''
     This function to show the output of segmentation with legend
-    :param data: the segmentation output of cnn
+    :param image: the segmentation output of cnn
     :param nb_classes: number of classes
     :param label_dic: the name of label, is a list and the position is proportional to the pixel values
     :return: None, plot the label with legend
+    
+    example:
+    label_path = '/home/huangbo/HuangBo_Projects/data/nordhorn/masks/07_1037_3x0.png'
+    label = misc.imread(label_path)
+    
+    dic = {'background':0,
+           'building':1,
+           'concrete':2,
+           'railway':3,
+           'cars':4,
+           'flat vegetation':5,
+           'bushes (medium vegetation)':6,
+           'trees (high vegetation)':7,
+           'water':8,
+           'fallow land':9,
+           'sand / rock':10
+          }
+    discrete_matshow(label, 11, dic)
+
     '''
 
     # define the colormap
@@ -236,7 +255,7 @@ def discrete_matshow(data , nb_classes, label_dic):
 
     bounds = np.linspace(0, nb_classes, nb_classes+1)
 
-    mat = plt.matshow(data, cmap=cmap)
+    mat = plt.matshow(image, cmap=cmap)
     cax = plt.colorbar(mat, spacing='proportional', ticks=np.arange(nb_classes), boundaries=bounds)
 
     cax.ax.set_yticklabels(label_dic)

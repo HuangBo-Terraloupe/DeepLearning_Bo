@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -10,9 +11,11 @@ from scipy import misc
 from keras.models import model_from_json, load_model
 from image_tools import compress_as_label,\
                         normalize_image_channelwise,\
-                        predict_single,predict_complete, \
+                        predict_single,\
+                        predict_complete, \
                         get_discrete_sliding_window_boxes, \
-                        crop_image
+                        crop_image, \
+                        discrete_matshow
 
 
 
@@ -25,12 +28,13 @@ class Sliding_window_evl:
 
     def prediction(self):
 
-        boxes_list = get_discrete_sliding_window_boxes(img_size=(self.image.shape[0], self.image.shape[1]),
+        boxes_list = get_discrete_sliding_window_boxes(img_size=(self.image.shape[0],
+                                                                 self.image.shape[1]),
                                                        bbox_size=(self.box_size, self.box_size),
-                                                       stride=(self.box_size / 2, self.box_size / 2))
+                                                       stride=(self.box_size / 2, self.box_size / 2)
+                                                       )
 
         nb_windows = len(boxes_list)
-        print "the number of windows", nb_windows
         nb_row = 0
 
         for i in range(nb_windows):
@@ -42,17 +46,17 @@ class Sliding_window_evl:
         for j in range(nb_col):
 
             for i in range(nb_row):
-                img = crop_image(image=self.image, crop_size=(self.box_size, self.box_size),
-                                 offset=(boxes_list[i + offset][0], boxes_list[i + offset][1]))
+                img = crop_image(image= self.image,
+                                 crop_size=(self.box_size, self.box_size),
+                                 offset=(boxes_list[i + offset][0], boxes_list[i + offset][1])
+                                 )
 
-                if self.mean == None:
-                    img_norm = normalize_image_channelwise(self.image)
-                else:
-                    img = img - self.mean
-                    img = img / 255.
+                # img_norm = img - self.mean
+                # img_norm = img_norm / 255.
+
+                img_norm = normalize_image_channelwise(img)
 
                 img_norm = np.expand_dims(img_norm, axis=0)
-
                 prediction = self.model.predict(img_norm)
                 prediction = compress_as_label(prediction)
                 prediction = np.reshape(prediction, (self.box_size, self.box_size))
@@ -85,8 +89,8 @@ class Complete_prediction:
             normal_image = normalize_image_channelwise(self.image)
 
         else:
-            self.image = self.image - self.mean
-            self.image = self.image / 255.
+            normal_image = self.image - self.mean
+            normal_image = normal_image / 255.
 
         prediction = predict_complete(self.model, normal_image)
         prediction = compress_as_label(prediction)
@@ -96,32 +100,77 @@ class Complete_prediction:
 
 
 if __name__ == '__main__':
-    # import matplotlib
-    # matplotlib.use('Agg')
 
-    #load the model
-    json_file = '/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_resnet_256/model.json'
-    weights_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_resnet_256/model.hdf5"
-    model = load_and_transfer(model_file=json_file, weights_file=weights_file)
+    # #load the model
+    # json_file = '/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_resnet_256/model.json'
+    # weights_file = "/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/06.18_resnet_256/model.hdf5"
+    # model = load_and_transfer(model_file=json_file, weights_file=weights_file)
 
-    mypath = "/home/huangbo/HuangBo_Projects/data/nordhorn/images_subset/"
-    image_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    # model
+    json_file = open('/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/model_540.json', 'r')
+    # json_file = open("model.json",'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    model = model_from_json(loaded_model_json)
+    model.load_weights("/home/huangbo/objectdetection/objectdetection/huangbo_ws/models/05.11_unet_540/weights_best.hdf5")
 
-    #for image in image_files:
-    evl_image = mypath + image_files[4]
-    evl_image = misc.imread(evl_image)
-
-    #sl_evl = Sliding_window_evl(evl_image, model, 256)
-    sl_evl = Complete_prediction(model, evl_image)
-    prediction = sl_evl.prediction()
+    # mypath = "/home/huangbo/HuangBo_Projects/data/nordhorn/images_evl/"
+    # image_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     #
-    # image_index = path + image[0:-3] + "tif"
+    # #for image in image_files:
+    # evl_image = mypath + image_files[np.random.randint(1, 100)]
 
-    fig = plt.figure()
-    fig.add_subplot(1, 2, 1)
-    plt.imshow(evl_image)
+    image_path = '/home/huangbo/Downloads/tom_006.jpg'
+    evl_image = cv2.imread(image_path, cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)
 
-    fig.add_subplot(1, 2, 2)
-    plt.imshow(prediction)
+    sl_evl = Sliding_window_evl(evl_image, model, 540, [114.96066323, 116.50405346, 102.74354111])
+    #sl_evl = Complete_prediction(model, evl_image)
+    prediction = sl_evl.prediction()
 
-    plt.show()
+    # dic = {'background': 0,
+    #        'building': 1,
+    #        'concrete': 2,
+    #        'railway': 3,
+    #        'cars': 4,
+    #        'flat vegetation': 5,
+    #        'bushes (medium vegetation)': 6,
+    #        'trees (high vegetation)': 7,
+    #        'water': 8,
+    #        'fallow land': 9,
+    #        'sand / rock': 10
+    #        }
+
+    # dic = {0:'background',
+    #        1:'building',
+    #        2:'concrete',
+    #        3:'railway',
+    #        4:'cars',
+    #        5:'flat vegetation',
+    #        6:'bushes (medium vegetation)',
+    #        7:'trees (high vegetation)',
+    #        8:'water',
+    #        9:'fallow land',
+    #        10:'sand / rock'
+    #        }
+
+    dic = ['background',
+           'building',
+           'concrete',
+           'railway',
+           'cars',
+           'flat vegetation',
+           'bushes',
+           'trees',
+           'water',
+           'fallow land',
+           'sand / rock']
+    discrete_matshow(prediction, 11, dic)
+
+    # fig = plt.figure()
+    # fig.add_subplot(1, 2, 1)
+    # plt.imshow(evl_image)
+    #
+    # fig.add_subplot(1, 2, 2)
+    # plt.imshow(prediction)
+    #
+    # plt.show()
