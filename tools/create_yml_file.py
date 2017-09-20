@@ -1,11 +1,7 @@
-from os import listdir
-from os.path import exists
-from PIL import Image
-import numpy as np
-import yaml
 import os
+import yaml
 
-import cv2
+from os import listdir
 from random import shuffle
 
 
@@ -17,17 +13,17 @@ IMG_TYPE= "ortho"  # optional
 IMG_CHANNELS = "rgb"
 SOURCE_BITDEPTH = 8
 
-CLASS_NAMES = ['Rooftop Area', 'Solar Thermal Panel',
+CLASS_NAMES = ['Rooftop Area', 'Panel',
                'Chimney/Ventilation Pipe', 'Roof Window']
 
 GT_TYPE = "bbox" # or categorial / bbox
-PREFIX = ''
-IMAGE_DIR_NAME = '/home/huangbo/HuangBo_Projects/regensburg/ortho/'
-MASKS_DIR_NAME = '/home/huangbo/Desktop/jsons_filter/'  #Only name, not full path
-IMG_EXT = '.jpg'  #Images extensions
-MASKS_EXT = '.json'  #Masks extensions
-OUTFILE_NAME = "regensburg.yml"
-TRAIN_RATIO = 1  # Training set ratio  Between 0-1 
+PREFIX = '/home/huangbo/HuangBo_Projects/regensburg/'
+IMAGE_DIR_NAME = 'images'
+MASKS_DIR_NAME = 'json_merge'  #Only name, not full path
+IMG_EXT = 'jpg'  #Images extensions
+MASKS_EXT = 'json'  #Masks extensions
+OUTFILE_NAME = "/home/huangbo/Desktop/regensburg.yml"
+TRAIN_RATIO = [0.8, 0.1, 0.1]  # Training set ratio  Between 0-1
 
 #########################################################################
 
@@ -54,16 +50,25 @@ for id in ids:
 
 
 total_images = len(image_paths)
-n_train = int(total_images * TRAIN_RATIO)
-n_val = total_images - n_train
+n_train = int(total_images * TRAIN_RATIO[0])
+n_val = int(total_images * TRAIN_RATIO[1])
+n_test = int(total_images * TRAIN_RATIO[2])
+
+
 train_list = image_paths[0:n_train]
 val_list = image_paths[n_train: n_train + n_val]
+test_list = image_paths[n_train + n_val: n_train + n_val + n_test]
+
+
+
 mask_train_list = masks_paths[0:n_train]
 mask_val_list = masks_paths[n_train: n_train + n_val]
+mask_test_list = image_paths[n_train + n_val: n_train + n_val + n_test]
 
 
 train = {'images': train_list, 'labels': mask_train_list}
 val = {'images': val_list, 'labels': mask_val_list}
+test = {'images': test_list, 'labels': mask_test_list}
     
 
 dataset = {"name": NAME, 
@@ -71,7 +76,9 @@ dataset = {"name": NAME,
            "data": data, 
            "ground_truth": ground_truth, 
            'training': train, 
-           'validation': val}
+           'validation': val,
+           'testing': test
+           }
 
 f = open( os.path.join(PREFIX, OUTFILE_NAME), 'wb')
 yaml.dump(dataset, f, default_flow_style=False)
