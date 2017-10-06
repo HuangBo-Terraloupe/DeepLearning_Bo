@@ -8,24 +8,53 @@ from random import shuffle
 #########################################################################
 #================== Set these ======================================
 
-NAME = 'Regensburg roof dataset' #Name of the dataset (optional)
+NAME = 'harvey roof dataset' #Name of the dataset (optional)
 IMG_TYPE= "ortho"  # optional
 IMG_CHANNELS = "rgb"
 SOURCE_BITDEPTH = 8
 
-CLASS_NAMES = ['Rooftop Area', 'Panel',
-               'Chimney/Ventilation Pipe', 'Roof Window']
+CLASS_NAMES = ['ABOVE_75',
+               'UP_TO_5',
+               'UP_TO_10',
+               'UP_TO_25',
+               'UP_TO_75'
+               ]
 
 GT_TYPE = "bbox" # or categorial / bbox
-PREFIX = '/home/huangbo/HuangBo_Projects/regensburg/'
+PREFIX = '/home/huangbo/HuangBo_Projects/harvey/training_data_filter_object/'
 IMAGE_DIR_NAME = 'images'
-MASKS_DIR_NAME = 'json_merge'  #Only name, not full path
+MASKS_DIR_NAME = 'annotations'  #Only name, not full path
 IMG_EXT = 'jpg'  #Images extensions
 MASKS_EXT = 'json'  #Masks extensions
-OUTFILE_NAME = "/home/huangbo/Desktop/regensburg.yml"
+OUTFILE_NAME = "/home/huangbo/HuangBo_Projects/harvey/training_data_filter_object/harvey.yml"
 TRAIN_RATIO = [0.8, 0.1, 0.1]  # Training set ratio  Between 0-1
 
 #########################################################################
+
+# #########################################################################
+# #================== Set these ======================================
+#
+# NAME = 'harvey roof dataset' #Name of the dataset (optional)
+# IMG_TYPE= "ortho"  # optional
+# IMG_CHANNELS = "rgb"
+# SOURCE_BITDEPTH = 8
+#
+# CLASS_NAMES = ['Rooftop Area',
+#                'Panel',
+#                'Chimney/Ventilation Pipe',
+#                'Roof Window',
+#                ]
+#
+# GT_TYPE = "bbox" # or categorial / bbox
+# PREFIX = '/home/huangbo/HuangBo_Projects/regensburg/'
+# IMAGE_DIR_NAME = 'images'
+# MASKS_DIR_NAME = 'json_merge'  #Only name, not full path
+# IMG_EXT = 'jpg'  #Images extensions
+# MASKS_EXT = 'json'  #Masks extensions
+# OUTFILE_NAME = "/home/huangbo/HuangBo_Projects/regensburg/model_object/regensburg.yml"
+# TRAIN_RATIO = [0.8, 0.1, 0.1]  # Training set ratio  Between 0-1
+#
+# #########################################################################
 
 data = {"type": IMG_TYPE, "channels": IMG_CHANNELS, "source_bitdepth": SOURCE_BITDEPTH}
 classes = [{"index": i, "name": cls} for i, cls in enumerate(CLASS_NAMES)]
@@ -63,7 +92,7 @@ test_list = image_paths[n_train + n_val: n_train + n_val + n_test]
 
 mask_train_list = masks_paths[0:n_train]
 mask_val_list = masks_paths[n_train: n_train + n_val]
-mask_test_list = image_paths[n_train + n_val: n_train + n_val + n_test]
+mask_test_list = masks_paths[n_train + n_val: n_train + n_val + n_test]
 
 
 train = {'images': train_list, 'labels': mask_train_list}
@@ -80,5 +109,5 @@ dataset = {"name": NAME,
            'testing': test
            }
 
-f = open( os.path.join(PREFIX, OUTFILE_NAME), 'wb')
+f = open(os.path.join(PREFIX, OUTFILE_NAME), 'wb')
 yaml.dump(dataset, f, default_flow_style=False)
