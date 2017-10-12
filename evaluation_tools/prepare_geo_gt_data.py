@@ -57,14 +57,16 @@ def create_geojson(yml_file, output_name, output_dir):
 
     for label in test_labels:
         data = json.loads(open(spec['prefix'] + label, "r").read())
+        print data
         img_name = data['img_name']
         if len(data['bboxes']) ==0:
             print "empty"
             output.append(GeoSeries({'id': id,
-                                     'category': None,
+                                     'category': 'bg',
                                      'geometry': None,
                                      'img_name': img_name,
                                      }))
+            id += 1
         else:
             for bbox in data['bboxes']:
                 category = bbox['category']
@@ -80,7 +82,6 @@ def create_geojson(yml_file, output_name, output_dir):
                                          }))
 
 
-        print id
         id += 1
 
     df = GeoDataFrame(output)
