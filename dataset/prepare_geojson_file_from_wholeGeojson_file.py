@@ -79,8 +79,6 @@ def create_data_set(img_folder, geojson_file, patch_size, out_ext, save_folder_a
                                   'patch_size': (patch_size, patch_size)
                                   }
 
-
-
             # check intersection of given patch with building outlines
             intersects_flag = data.intersects(geo)
 

@@ -94,7 +94,7 @@ def create_geojson(yml_file, output_name, output_dir):
                )
 
 if __name__ == '__main__':
-    yml_file = '/home/huangbo/HuangBo_Projects/harvey/training_data_filter_object/harvey.yml'
+    yml_file = '/home/huangbo/HuangBo_Projects/harvey/output/2017-10-10T14:39:18.506835/harvey.yml'
     output_name = 'groundtruth'
-    output_dir = '/home/huangbo/HuangBo_Projects/harvey/evaluation/model_object/gt'
+    output_dir = '/home/huangbo/HuangBo_Projects/harvey/output/2017-10-10T14:39:18.506835/evaluation/gt'
     create_geojson(yml_file, output_name, output_dir)
