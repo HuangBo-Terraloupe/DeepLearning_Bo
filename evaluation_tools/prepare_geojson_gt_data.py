@@ -48,7 +48,7 @@ def write_json(data, output_name, output_dir, geo_flag=True, indent=4):
     with open(os.path.join(output_dir, '%s.%s' % (output_name, file_ext)), 'wb') as fp:
         json.dump(result, fp, indent=indent, sort_keys=True)
 
-def create_geojson(yml_file, output_name, output_dir):
+def create_geojson(yml_file, class_mapping, output_name, output_dir):
     output = []
     id = 0
     with open(yml_file, 'r') as fp:
@@ -57,12 +57,11 @@ def create_geojson(yml_file, output_name, output_dir):
 
     for label in test_labels:
         data = json.loads(open(spec['prefix'] + label, "r").read())
-        print data
         img_name = data['img_name']
         if len(data['bboxes']) ==0:
-            print "empty"
             output.append(GeoSeries({'id': id,
                                      'category': 'bg',
+                                     'category_num':class_mapping[str(category)],
                                      'geometry': None,
                                      'img_name': img_name,
                                      }))
@@ -77,6 +76,7 @@ def create_geojson(yml_file, output_name, output_dir):
 
                 output.append(GeoSeries({'id': id,
                                          'category': category,
+                                         'category_num': class_mapping[str(category)],
                                          'geometry': Polygon(temp_poly),
                                          'img_name': img_name,
                                          }))
@@ -94,7 +94,14 @@ def create_geojson(yml_file, output_name, output_dir):
                )
 
 if __name__ == '__main__':
-    yml_file = '/home/huangbo/HuangBo_Projects/harvey/output/2017-10-10T14:39:18.506835/harvey.yml'
+    class_mapping = {'UP_TO_5': 0,
+                     'UP_TO_10': 1,
+                     'UP_TO_25': 2,
+                     'UP_TO_75': 3,
+                     'ABOVE_75': 4,
+                     'bg': 5
+                     }
+    yml_file = '/home/huangbo/training_data_filter_object/harvey.yml'
     output_name = 'groundtruth'
-    output_dir = '/home/huangbo/HuangBo_Projects/harvey/output/2017-10-10T14:39:18.506835/evaluation/gt'
-    create_geojson(yml_file, output_name, output_dir)
+    output_dir = '/home/huangbo/evaluation/groundtruth'
+    create_geojson(yml_file, class_mapping, output_name, output_dir)

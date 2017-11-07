@@ -1,4 +1,3 @@
-
 import os
 import cv2
 import json
@@ -12,12 +11,11 @@ from shapely.geometry import box
 
 
 CLASS_MAPPING = {1:'UP_TO_5',
-                 2:'UP_TP_10',
+                 2:'UP_TO_10',
                  3:'UP_TO_25',
                  4:'UP_TO_75',
                  5:'ABOVE_75'
                  }
-
 
 def write_geojson(df, out, epsg_out):
     # write *.geojson
@@ -121,14 +119,14 @@ def create_data_set(img_folder, geojson_file, patch_size, out_ext, save_folder_a
                         print 'filter a small area'
                         continue
 
-                    # filter the box with very big or very small ratio
-                    try:
-                        ratio = float((x2-x1)/(y2 -y1))
-                    except:
-                        ratio = float((y2 -y1)/(x2-x1))
-                    if ratio > 40 or ratio < float(1.0/40):
-                        print 'filter a box with bad ratio'
-                        continue
+                    # # filter the box with very big or very small ratio
+                    # try:
+                    #     ratio = float((x2-x1)/(y2 -y1))
+                    # except:
+                    #     ratio = float((y2 -y1)/(x2-x1))
+                    # if ratio > 40 or ratio < float(1.0/40):
+                    #     print 'filter a box with bad ratio'
+                    #     continue
 
                     category = CLASS_MAPPING[data['damage_class'][int(intersects_flag[intersects_flag].index[0])]]
                     annotation_data['bboxes'].append(
@@ -139,15 +137,15 @@ def create_data_set(img_folder, geojson_file, patch_size, out_ext, save_folder_a
                          'y2': y2,
                          })
 
-                # only save the image patch contains a bounding box
-                if len(annotation_data['bboxes']) > 0:
-                    file_name, file_ext = os.path.splitext(out_name)
-                    with open(os.path.join(save_folder_annotation, file_name + '.json'), 'w') as fp:
-                        json.dump(annotation_data, fp)
+            # only save the image patch contains a bounding box
+            if len(annotation_data['bboxes']) > 0:
+                file_name, file_ext = os.path.splitext(out_name)
+                with open(os.path.join(save_folder_annotation, file_name + '.json'), 'w') as fp:
+                    json.dump(annotation_data, fp)
 
-                    # write patch
-                    out_path = os.path.join(save_folder_images, out_name)
-                    cv2.imwrite(out_path, tile[:, :, ::-1])  # flip channels since opencv
+                # write patch
+                out_path = os.path.join(save_folder_images, out_name)
+                cv2.imwrite(out_path, tile[:, :, ::-1])  # flip channels since opencv
 
     with open(geo_info_pickle_file, 'wb') as fp:
         json.dump(geo_info, fp)
@@ -160,9 +158,9 @@ if __name__ == '__main__':
     geojson_file = '/media/huangbo/af7c9732-0244-404a-a082-396c9f13172e/harvey_data/bo/Building_Damage/combined_building_damage.geojson'
     patch_size = 500
     out_ext = '.jpg'
-    save_folder_annotation = '/home/huangbo/Building_damage/annotations'
-    save_folder_images = '/home/huangbo/Building_damage/images'
-    geo_info_pickle_file = '/home/huangbo/Building_damage/geo_info.pickle'
+    save_folder_annotation = '/home/huangbo/Building_damage_nofilter/annotations'
+    save_folder_images = '/home/huangbo/Building_damage_nofilter/images'
+    geo_info_pickle_file = '/home/huangbo/Building_damage_nofilter/geo_info.pickle'
 
     # run
     create_data_set(img_folder, geojson_file, patch_size, out_ext, save_folder_annotation, save_folder_images,
