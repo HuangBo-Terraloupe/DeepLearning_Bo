@@ -1,21 +1,14 @@
-import os
-import cv2
 import json
-import rasterio
-import geopandas as gpd
-
+import os
 from glob import glob
-from affine import Affine
 from itertools import product
+
+import cv2
+import geopandas as gpd
+import rasterio
+from affine import Affine
 from shapely.geometry import box
 
-
-CLASS_MAPPING = {1:'UP_TO_5',
-                 2:'UP_TO_10',
-                 3:'UP_TO_25',
-                 4:'UP_TO_75',
-                 5:'ABOVE_75'
-                 }
 
 def write_geojson(df, out, epsg_out):
     # write *.geojson
@@ -31,14 +24,15 @@ def write_geojson(df, out, epsg_out):
         json.dump(result, f, indent=None, sort_keys=True)
 
 
-def create_data_set(img_folder, geojson_file, data_set_name, patch_size, out_ext, save_folder_annotation, save_folder_images,
+def create_data_set(img_folder, geojson_file, data_set_name, epsg, patch_size, out_ext, save_folder_annotation,
+                    save_folder_images,
                     geo_info_pickle_file):
     patch_num = 0
     geo_info = {}
 
-    img_list = glob(img_folder + "*.tif")
+    img_list = glob(os.path.join(img_folder, "*.tif"))
     data = gpd.read_file(geojson_file)
-    data = data.to_crs(epsg=32614)  # convert input building outlines -> correct CRS (of images!)
+    data = data.to_crs(epsg=epsg)  # convert input building outlines -> correct CRS (of images!)
 
     print 'total img number is:', len(img_list)
 
@@ -47,8 +41,7 @@ def create_data_set(img_folder, geojson_file, data_set_name, patch_size, out_ext
         # # get file name and extension separately
         # _, file_name = os.path.split(img)
         # file_name, file_ext = os.path.splitext(file_name)
-        print 'curren operate img:', img_idx
-
+        print 'current operate img:', img_idx
 
         # load image
         with rasterio.open(img) as fp:
@@ -60,15 +53,30 @@ def create_data_set(img_folder, geojson_file, data_set_name, patch_size, out_ext
         height, width = image.shape[0:2]
 
         # determine vertices within image
-        n_w = range(0, width, patch_size)
-        n_h = range(0, height, patch_size)
+        n_w = range(0, height, patch_size)
+        n_h = range(0, width, patch_size)
         vertices = [[y, x] for x, y in product(n_w, n_h)]  # in pixel!
 
         for i, v in enumerate(vertices):
+
+            x0 = v[1]
+            x1 = v[1] + patch_size
+
+            y0 = v[0]
+            y1 = v[0] + patch_size
+
+            if x1 > image.shape[0]:
+                x0 = image.shape[0] - patch_size
+                x1 = image.shape[0]
+
+            if y1 > image.shape[1]:
+                y0 = image.shape[1] - patch_size
+                y1 = image.shape[1]
+
             if len(image.shape) > 2:
-                tile = image[v[1]:v[1] + patch_size, v[0]:v[0] + patch_size, :]
+                tile = image[x0:x1, y0:y1, :]
             else:
-                tile = image[v[1]:v[1] + patch_size, v[0]:v[0] + patch_size]
+                tile = image[x0:x1, y0:y1]
 
             # output filename for the patch
             out_name = '%06d%s' % (patch_num, out_ext)
@@ -101,35 +109,31 @@ def create_data_set(img_folder, geojson_file, data_set_name, patch_size, out_ext
 
                 # iterate through all possible intersections
                 for _, data_f in data_filt.iterrows():
-                    x1, y1, x2, y2 = data_f.geometry.intersection(geo).bounds  # bounds in real world coords
-                    tl = (x1, y2) * ~patch_affine
-                    br = (x2, y1) * ~patch_affine
 
+                    # get min/max bounds of geometry (real world)
+                    x_min, y_min, x_max, y_max = data_f.geometry.intersection(geo).bounds
+
+                    # convert min/max bounds to top left/bottom right (pixel coords)
+                    tl = (x_min, y_max) * ~patch_affine
+                    br = (x_max, y_min) * ~patch_affine
+
+                    # convert to top left, bottom right notation (for later analysis + training)
                     x1 = int(tl[0])
                     y1 = int(tl[1])
                     x2 = int(br[0])
                     y2 = int(br[1])
 
                     # filter the box that contains only a single pixel
-                    if x1==x2 or y1==y2:
+                    if x1 == x2 or y1 == y2:
                         print 'filter a single point'
                         continue
                     # filter the box with small area
                     temp_box = box(x1, y1, x2, y2)
-                    if temp_box.area < 20*20:
+                    if temp_box.area < 20 * 20:
                         print 'filter a small area'
                         continue
 
-                    # # filter the box with very big or very small ratio
-                    # try:
-                    #     ratio = float((x2-x1)/(y2 -y1))
-                    # except:
-                    #     ratio = float((y2 -y1)/(x2-x1))
-                    # if ratio > 40 or ratio < float(1.0/40):
-                    #     print 'filter a box with bad ratio'
-                    #     continue
-
-                    category = CLASS_MAPPING[data['damage_class'][int(intersects_flag[intersects_flag].index[0])]]
+                    category = 'tank'
                     annotation_data['bboxes'].append(
                         {'category': category,
                          'x1': x1,
@@ -153,17 +157,18 @@ def create_data_set(img_folder, geojson_file, data_set_name, patch_size, out_ext
 
 
 if __name__ == '__main__':
-
     # input parameters
-    img_folder = '/media/huangbo/af7c9732-0244-404a-a082-396c9f13172e/harvey_data/bo/Building_Damage/aoi/'
-    geojson_file = '/media/huangbo/af7c9732-0244-404a-a082-396c9f13172e/harvey_data/bo/Building_Damage/combined_building_damage.geojson'
-    data_set_name = 'regensburg'
+    img_folder = '/home/huangbo/tank_detection/tank_detection/images/Zurich'
+    geojson_file = '/home/huangbo/tank_detection/tank_label/zurich/zurich.geojson'
+    data_set_name = 'zurich'
     patch_size = 500
+    epsg = 2056  # prag: 5514, zurich: 2056, regensburg: 31468
     out_ext = '.jpg'
-    save_folder_annotation = '/home/huangbo/Building_damage_nofilter/annotations'
-    save_folder_images = '/home/huangbo/Building_damage_nofilter/images'
-    geo_info_pickle_file = '/home/huangbo/Building_damage_nofilter/geo_info.pickle'
+    save_folder_annotation = '/home/huangbo/tank_detection/dataset/annotations'
+    save_folder_images = '/home/huangbo/tank_detection/dataset/images'
+    geo_info_pickle_file = '/home/huangbo/tank_detection/dataset/geo_info_zurich.pickle'
 
     # run
-    create_data_set(img_folder, geojson_file, data_set_name, patch_size, out_ext, save_folder_annotation, save_folder_images,
+    create_data_set(img_folder, geojson_file, data_set_name, epsg, patch_size, out_ext, save_folder_annotation,
+                    save_folder_images,
                     geo_info_pickle_file)

@@ -8,26 +8,21 @@ from random import shuffle
 #########################################################################
 #================== Set these ======================================
 
-NAME = 'harvey roof dataset' #Name of the dataset (optional)
+NAME = 'tank' #Name of the dataset (optional)
 IMG_TYPE= "ortho"  # optional
 IMG_CHANNELS = "rgb"
 SOURCE_BITDEPTH = 8
 
-CLASS_NAMES = ['ABOVE_75',
-               'UP_TO_5',
-               'UP_TO_10',
-               'UP_TO_25',
-               'UP_TO_75'
-               ]
+CLASS_NAMES = ['tank']
 
 GT_TYPE = "bbox" # or categorial / bbox
-PREFIX = '/home/huangbo/HuangBo_Projects/harvey/training_data_filter_object/'
+PREFIX = '/home/huangbo/tank_detection/dataset/'
 IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'annotations'  #Only name, not full path
 IMG_EXT = 'jpg'  #Images extensions
 MASKS_EXT = 'json'  #Masks extensions
-OUTFILE_NAME = "/home/huangbo/HuangBo_Projects/harvey/training_data_filter_object/harvey.yml"
-TRAIN_RATIO = [0.8, 0.1, 0.1]  # Training set ratio  Between 0-1
+OUTFILE_NAME = "/home/huangbo/tank_detection/dataset/tank.yml"
+TRAIN_RATIO = [0.9, 0.1, 0.0]  # Training set ratio  Between 0-1
 
 #########################################################################
 
