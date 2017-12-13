@@ -9,6 +9,7 @@ from random import shuffle
 #================== Set these ======================================
 
 NAME = 'Hollywood' #Name of the dataset (optional)
+
 IMG_TYPE= "ortho"  # optional
 IMG_CHANNELS = "rgb"
 SOURCE_BITDEPTH = 8
@@ -16,13 +17,15 @@ SOURCE_BITDEPTH = 8
 CLASS_NAMES = ['object']
 
 GT_TYPE = "bbox" # or categorial / bbox
-PREFIX = '/home/ga58zak/Hollywood_all_dataset/'
+PREFIX = '/home/ga58zak/Hollywood_dataset/'
+
 IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'annotations'  #Only name, not full path
 IMG_EXT = 'jpg'  #Images extensions
 MASKS_EXT = 'json'  #Masks extensions
-OUTFILE_NAME = '/home/ga58zak/Hollywood_all_dataset/hollywood.yml'
+OUTFILE_NAME = '/home/ga58zak/Hollywood_dataset/hollywood.yml'
 TRAIN_RATIO = [0.95, 0.05, 0.0]  # Training set ratio  Between 0-1
+
 
 #########################################################################
 

@@ -101,7 +101,7 @@ if __name__ == '__main__':
                      'ABOVE_75': 4,
                      'bg': 5
                      }
-    yml_file = '/home/huangbo/training_data_filter_object/harvey.yml'
+    yml_file = '/home/huangbo/harvey/Building_damage_nofilter/building_damage.yml'
     output_name = 'groundtruth'
-    output_dir = '/home/huangbo/evaluation/groundtruth'
+    output_dir = '/home/huangbo/harvey/evaluation/gt'
     create_geojson(yml_file, class_mapping, output_name, output_dir)
