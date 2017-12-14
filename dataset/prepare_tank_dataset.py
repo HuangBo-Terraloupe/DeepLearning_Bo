@@ -25,8 +25,7 @@ def write_geojson(df, out, epsg_out):
 
 
 def create_data_set(img_folder, geojson_file, data_set_name, epsg, patch_size, out_ext, save_folder_annotation,
-                    save_folder_images,
-                    geo_info_pickle_file):
+                    save_folder_images, geo_info_pickle_file):
     patch_num = 0
     geo_info = {}
 
@@ -47,7 +46,7 @@ def create_data_set(img_folder, geojson_file, data_set_name, epsg, patch_size, o
         with rasterio.open(img) as fp:
             affine = fp.affine
             image = fp.read()
-            img_epsg = fp.crs
+            #img_epsg = fp.crs
 
         image = image.transpose(1, 2, 0)  # flip axis to have channels last
         height, width = image.shape[0:2]
@@ -58,6 +57,10 @@ def create_data_set(img_folder, geojson_file, data_set_name, epsg, patch_size, o
         vertices = [[y, x] for x, y in product(n_w, n_h)]  # in pixel!
 
         for i, v in enumerate(vertices):
+            # output filename for the patch
+            out_name = '%06d%s' % (patch_num, out_ext)
+            out_name = data_set_name + out_name
+            patch_num += 1
 
             x0 = v[1]
             x1 = v[1] + patch_size
@@ -65,34 +68,43 @@ def create_data_set(img_folder, geojson_file, data_set_name, epsg, patch_size, o
             y0 = v[0]
             y1 = v[0] + patch_size
 
+            dx = 0
+            dy = 0
+
             if x1 > image.shape[0]:
+                dx = x1 - image.shape[0]
                 x0 = image.shape[0] - patch_size
                 x1 = image.shape[0]
 
+
             if y1 > image.shape[1]:
+                dy = y1 - image.shape[1]
                 y0 = image.shape[1] - patch_size
                 y1 = image.shape[1]
+
+            # if y1 > image.shape[1] or x1 > image.shape[0]:
+            #     print 'crop the image cross the boundry'
+            #     continue
 
             if len(image.shape) > 2:
                 tile = image[x0:x1, y0:y1, :]
             else:
                 tile = image[x0:x1, y0:y1]
 
-            # output filename for the patch
-            out_name = '%06d%s' % (patch_num, out_ext)
-            out_name = data_set_name + out_name
-            patch_num += 1
 
             annotation_data = {"img_name": out_name,
                                'bboxes': []
                                }
 
             # build geometry bounds for later analysis
+            v[0] = v[0] - dy
+            v[1] = v[1] - dx
             patch_affine = affine * Affine.translation(v[0], v[1])
             spoint = affine * v
             epoint = affine * (v[0] + patch_size, v[1] + patch_size)
 
             geo = box(spoint[0], spoint[1], epoint[0], epoint[1])
+
             # save for later
             geo_info[out_name] = {'patch_affine': patch_affine,
                                   'patch_size': (patch_size, patch_size)
@@ -127,9 +139,10 @@ def create_data_set(img_folder, geojson_file, data_set_name, epsg, patch_size, o
                     if x1 == x2 or y1 == y2:
                         print 'filter a single point'
                         continue
+
                     # filter the box with small area
                     temp_box = box(x1, y1, x2, y2)
-                    if temp_box.area < 20 * 20:
+                    if temp_box.area < 16 * 16:
                         print 'filter a small area'
                         continue
 
@@ -158,17 +171,16 @@ def create_data_set(img_folder, geojson_file, data_set_name, epsg, patch_size, o
 
 if __name__ == '__main__':
     # input parameters
-    img_folder = '/home/huangbo/tank_detection/tank_detection/images/Zurich'
-    geojson_file = '/home/huangbo/tank_detection/tank_label/zurich/zurich.geojson'
-    data_set_name = 'zurich'
+    img_folder = '/home/huangbo/tank_detection/tank_detection/images/Prague'
+    geojson_file = '/home/huangbo/tank_detection/tank_label/prague/prague.geojson'
+    data_set_name = 'regensburg'
     patch_size = 500
-    epsg = 2056  # prag: 5514, zurich: 2056, regensburg: 31468
+    epsg = 5514  # prag: 5514, zurich: 2056, regensburg: 31468
     out_ext = '.jpg'
     save_folder_annotation = '/home/huangbo/tank_detection/dataset/annotations'
     save_folder_images = '/home/huangbo/tank_detection/dataset/images'
-    geo_info_pickle_file = '/home/huangbo/tank_detection/dataset/geo_info_zurich.pickle'
+    geo_info_pickle_file = '/home/huangbo/tank_detection/dataset/' + 'geo_info_' + data_set_name + '.pickle'
 
     # run
     create_data_set(img_folder, geojson_file, data_set_name, epsg, patch_size, out_ext, save_folder_annotation,
-                    save_folder_images,
-                    geo_info_pickle_file)
+                    save_folder_images, geo_info_pickle_file)

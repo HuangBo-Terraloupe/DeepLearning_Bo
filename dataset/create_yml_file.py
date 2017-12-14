@@ -16,15 +16,14 @@ SOURCE_BITDEPTH = 8
 CLASS_NAMES = ['tank']
 
 GT_TYPE = "bbox" # or categorial / bbox
-PREFIX = '/home/huangbo/tank_detection/dataset/'
-IMAGE_DIR_NAME = 'images'
-MASKS_DIR_NAME = 'annotations'  #Only name, not full path
+PREFIX = '/home/huangbo/tank_detection/dataset_negative/'
+IMAGE_DIR_NAME = 'images_negative'
+MASKS_DIR_NAME = 'annotations_negative'  #Only name, not full path
 IMG_EXT = 'jpg'  #Images extensions
 MASKS_EXT = 'json'  #Masks extensions
-OUTFILE_NAME = "/home/huangbo/tank_detection/dataset/tank.yml"
-TRAIN_RATIO = [0.9, 0.1, 0.0]  # Training set ratio  Between 0-1
+OUTFILE_NAME = "/home/huangbo/tank_detection/dataset_negative/tank_negative.yml"
+TRAIN_RATIO = [1.0, 0.0, 0.0]  # Training set ratio  Between 0-1
 
-#########################################################################
 
 # #########################################################################
 # #================== Set these ======================================

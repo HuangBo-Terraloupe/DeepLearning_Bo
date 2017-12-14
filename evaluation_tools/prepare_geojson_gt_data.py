@@ -54,6 +54,9 @@ def create_geojson(yml_file, class_mapping, output_name, output_dir):
     with open(yml_file, 'r') as fp:
         spec = yaml.load(fp.read())
     test_labels = spec['testing']['labels']
+    if len(test_labels) == 0:
+        test_labels = spec['validation']['labels']
+    print 'the number of evluation images is:', len(test_labels)
 
     for label in test_labels:
         data = json.loads(open(spec['prefix'] + label, "r").read())
@@ -82,7 +85,7 @@ def create_geojson(yml_file, class_mapping, output_name, output_dir):
                                          }))
 
 
-        id += 1
+                id += 1
 
     df = GeoDataFrame(output)
     df.crs = {'init': 'epsg:32632'}
@@ -94,14 +97,19 @@ def create_geojson(yml_file, class_mapping, output_name, output_dir):
                )
 
 if __name__ == '__main__':
-    class_mapping = {'UP_TO_5': 0,
-                     'UP_TO_10': 1,
-                     'UP_TO_25': 2,
-                     'UP_TO_75': 3,
-                     'ABOVE_75': 4,
-                     'bg': 5
-                     }
-    yml_file = '/home/huangbo/harvey/Building_damage_nofilter/building_damage.yml'
+    # class_mapping = {'UP_TO_5': 0,
+    #                  'UP_TO_10': 1,
+    #                  'UP_TO_25': 2,
+    #                  'UP_TO_75': 3,
+    #                  'ABOVE_75': 4,
+    #                  'bg': 5
+    #                  }
+    # yml_file = '/home/huangbo/harvey/Building_damage_nofilter/building_damage.yml'
+    # output_name = 'groundtruth'
+    # output_dir = '/home/huangbo/harvey/evaluation/gt'
+    class_mapping = {'tank': 0,
+                     'bg': 1}
+    yml_file = '/home/huangbo/tank_detection/dataset/tank.yml'
     output_name = 'groundtruth'
-    output_dir = '/home/huangbo/harvey/evaluation/gt'
+    output_dir = '/home/huangbo/tank_detection/evaluation/retina_net/gt'
     create_geojson(yml_file, class_mapping, output_name, output_dir)
