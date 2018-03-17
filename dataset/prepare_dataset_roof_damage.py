@@ -114,9 +114,11 @@ def create_data_set(img_folder, geojson_file, data_set_name, patch_size, out_ext
                     if x1==x2 or y1==y2:
                         print 'filter a single point'
                         continue
+
                     # filter the box with small area
-                    temp_box = box(x1, y1, x2, y2)
-                    if temp_box.area < 20*20:
+                    width = int(x2 - x1)
+                    height = int(y2 - y1)
+                    if width < 24 or height < 24:
                         print 'filter a small area'
                         continue
 
