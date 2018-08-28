@@ -9,11 +9,9 @@ from PIL import Image
 from keras.models import Model
 from keras.utils import np_utils
 from keras.applications import VGG16
-from keras.layers import Input, Flatten, Dense
-from keras.metrics import categorical_crossentropy
 from keras.callbacks import ModelCheckpoint, TensorBoard
 
-from keras.layers import Dense, Activation, Convolution2D, MaxPooling2D, Flatten
+from keras.layers import Dense, Flatten
 from keras.optimizers import Adam
 
 
@@ -119,15 +117,8 @@ def medicine_classifier_training_run(train_folder, test_folder, image_width, ima
 
     print('start training ...')
     # Another way to train the model
-    model.fit(train_images, train_labels, epochs=5, batch_size=1, callbacks=[weights, tensorboard])
+    model.fit(train_images, train_labels, epochs=5, batch_size=1, callbacks=[weights, tensorboard], validation_data=(test_images, test_labels))
 
-    print('\nTesting ------------')
-
-    # Evaluate the model with the metrics
-    loss, accuracy = model.evaluate(test_images, test_labels)
-
-    print('\ntest loss: ', loss)
-    print('\ntest accuracy: ', accuracy)
 
 
 if __name__ == '__main__':
