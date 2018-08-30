@@ -21,7 +21,9 @@ def normalization(x, mean):
 
 def build_vgg_model(image_width, image_hight, nb_classes):
     # training model
-    base_model = VGG16(input_shape=(image_width, image_hight, 3), weights='imagenet', include_top=False)
+    base_model = VGG16(input_shape=(image_width, image_hight, 3), weights=None, include_top=False)
+    base_model.load_weights('/home/bo/Desktop/pre_trained_weights/vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5')
+    print('loading vgg pre-trained weights ...')
     x = base_model.layers[-1].output
     x = Flatten(name='flatten')(x)
     x = Dense(4096, activation='relu', name='fc1')(x)
@@ -47,11 +49,11 @@ def build_self_made_model(image_width, image_hight, nb_classes):
     x = MaxPooling2D((2, 2), strides=(2, 2), name='block2_pool')(x)
 
     x = Flatten(name='flatten')(x)
-    x = Dense(4096, activation='relu', name='fc1')(x)
-    x = Dense(4096, activation='relu', name='fc2')(x)
+    x = Dense(512, activation='relu', name='fc1')(x)
+    x = Dense(512, activation='relu', name='fc2')(x)
     prediction = Dense(nb_classes, activation='softmax', name='predictions')(x)
 
-    model = Model(x, prediction, name='linjiali')
+    model = Model(img_input, prediction, name='linjiali')
     print(model.summary())
     return model
 
@@ -134,7 +136,7 @@ def medicine_classifier_training_run(train_folder, test_folder, image_width, ima
     #model = build_self_made_model(image_width, image_hight, nb_classes=len(class_mapping))
 
     # optimizer
-    adam = Adam(lr=1e-4)
+    adam = Adam(lr=1e-6)
 
     # compile the model
     model.compile(optimizer=adam,
@@ -149,15 +151,15 @@ def medicine_classifier_training_run(train_folder, test_folder, image_width, ima
 
     print('start training ...')
     # Another way to train the model
-    model.fit(train_images, train_labels, epochs=5, batch_size=1, callbacks=[weights, tensorboard], validation_data=(test_images, test_labels))
+    model.fit(train_images, train_labels, epochs=50, batch_size=5, callbacks=[weights, tensorboard], validation_data=(test_images, test_labels))
 
 
 
 if __name__ == '__main__':
-    train_folder = '/home/terraloupe/DataSet/Train'
-    test_folder = '/home/terraloupe/DataSet/Test'
+    train_folder = '/home/bo/Desktop/DataSet/Train'
+    test_folder = '/home/bo/Desktop/DataSet/Test'
     image_width = 224
     image_hight = 224
-    model_save_folder = '/home/terraloupe/DataSet/output'
+    model_save_folder = '/home/bo/Desktop/DataSet/output'
     medicine_classifier_training_run(train_folder, test_folder, image_width, image_hight, model_save_folder)
 
