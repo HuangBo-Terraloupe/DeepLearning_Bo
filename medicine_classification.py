@@ -4,34 +4,69 @@ import numpy as np
 
 from time import time
 from glob import glob
-from PIL import Image
 
 from keras.models import Model
 from keras.utils import np_utils
 from keras.applications import VGG16
 from keras.callbacks import ModelCheckpoint, TensorBoard
 
-from keras.layers import Dense, Flatten
+from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Input
 from keras.optimizers import Adam
 
+def normalization(x, mean):
+    x[..., 0] -= mean[0]
+    x[..., 1] -= mean[1]
+    x[..., 2] -= mean[2]
+    return x
 
-def read_image_bgr(path):
-    """ Read an image in BGR format.
-    Args
-        path: Path to the image.
-    """
-    image = np.asarray(Image.open(path).convert('RGB'))
-    return image[:, :, ::-1].copy()
+def build_vgg_model(image_width, image_hight, nb_classes):
+    # training model
+    base_model = VGG16(input_shape=(image_width, image_hight, 3), weights='imagenet', include_top=False)
+    x = base_model.layers[-1].output
+    x = Flatten(name='flatten')(x)
+    x = Dense(4096, activation='relu', name='fc1')(x)
+    x = Dense(4096, activation='relu', name='fc2')(x)
+    prediction = Dense(nb_classes, activation='softmax', name='predictions')(x)
 
-def normalization(x):
-    x[..., 0] -= 103.939
-    x[..., 1] -= 116.779
-    x[..., 2] -= 123.68
+    model = Model(inputs=base_model.input, outputs=prediction)
+    print(model.summary())
+    return model
 
-    return x/127.5
+def build_self_made_model(image_width, image_hight, nb_classes):
 
+    img_input = Input(shape=(image_width, image_hight, 3))
+
+    # Block 1
+    x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv1')(img_input)
+    x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv2')(x)
+    x = MaxPooling2D((2, 2), strides=(2, 2), name='block1_pool')(x)
+
+    # Block 2
+    x = Conv2D(128, (3, 3), activation='relu', padding='same', name='block2_conv1')(x)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same', name='block2_conv2')(x)
+    x = MaxPooling2D((2, 2), strides=(2, 2), name='block2_pool')(x)
+
+    x = Flatten(name='flatten')(x)
+    x = Dense(4096, activation='relu', name='fc1')(x)
+    x = Dense(4096, activation='relu', name='fc2')(x)
+    prediction = Dense(nb_classes, activation='softmax', name='predictions')(x)
+
+    model = Model(x, prediction, name='linjiali')
+    print(model.summary())
+    return model
 
 def medicine_classifier_training_run(train_folder, test_folder, image_width, image_hight, model_save_folder):
+    '''Training a classifier for medicine classification
+    Args:
+        train_folder:
+        test_folder:
+        image_width:
+        image_hight:
+        model_save_folder:
+
+    Returns:
+
+    '''
 
     # class_mapping
     class_mapping = {}
@@ -62,7 +97,7 @@ def medicine_classifier_training_run(train_folder, test_folder, image_width, ima
         img_folder_path = os.path.join(train_folder, category)
         image_paths = os.listdir(img_folder_path)
         for image_path in image_paths:
-            image = read_image_bgr(os.path.join(img_folder_path, image_path))
+            image = cv2.imread(os.path.join(img_folder_path, image_path))
             image = cv2.resize(image, (image_hight, image_width))
             train_images[train_data_index] = image
             train_labels[train_data_index] = int(class_mapping[category])
@@ -77,7 +112,7 @@ def medicine_classifier_training_run(train_folder, test_folder, image_width, ima
         img_folder_path = os.path.join(test_folder, category)
         image_paths = os.listdir(img_folder_path)
         for image_path in image_paths:
-            image = read_image_bgr(os.path.join(img_folder_path, image_path))
+            image = cv2.imread(os.path.join(img_folder_path, image_path))
             image = cv2.resize(image, (image_hight, image_width))
             test_images[test_data_index] = image
             test_labels[test_data_index] = int(class_mapping[category])
@@ -87,19 +122,16 @@ def medicine_classifier_training_run(train_folder, test_folder, image_width, ima
     train_labels = np_utils.to_categorical(train_labels, num_classes=len(class_mapping))
     test_labels = np_utils.to_categorical(test_labels, num_classes=len(class_mapping))
 
-    train_images = normalization(train_images)
-    test_images = normalization(test_images)
+    # calculating the mean
+    BGR_mean = [train_images[..., 0].mean(), train_images[..., 1].mean(), train_images[..., 2].mean()]
+    print('The BGR mean of image dataset are:', BGR_mean)
 
-    # training model
-    base_model = VGG16(input_shape=(image_width, image_hight, 3), weights='imagenet', include_top=False)
-    x = base_model.layers[-1].output
-    x = Flatten(name='flatten')(x)
-    x = Dense(4096, activation='relu', name='fc1')(x)
-    x = Dense(4096, activation='relu', name='fc2')(x)
-    prediction = Dense(len(class_mapping), activation='softmax', name='predictions')(x)
+    train_images = normalization(train_images, BGR_mean)
+    test_images = normalization(test_images, BGR_mean)
 
-    model = Model(inputs=base_model.input, outputs=prediction)
-    print(model.summary())
+    # bulding model
+    model = build_vgg_model(image_width, image_hight, nb_classes=len(class_mapping))
+    #model = build_self_made_model(image_width, image_hight, nb_classes=len(class_mapping))
 
     # optimizer
     adam = Adam(lr=1e-4)
@@ -124,8 +156,8 @@ def medicine_classifier_training_run(train_folder, test_folder, image_width, ima
 if __name__ == '__main__':
     train_folder = '/home/terraloupe/DataSet/Train'
     test_folder = '/home/terraloupe/DataSet/Test'
-    image_width = 449
-    image_hight = 449
+    image_width = 224
+    image_hight = 224
     model_save_folder = '/home/terraloupe/DataSet/output'
     medicine_classifier_training_run(train_folder, test_folder, image_width, image_hight, model_save_folder)
 
