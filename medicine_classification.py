@@ -10,7 +10,7 @@ from keras.utils import np_utils
 from keras.applications import VGG16
 from keras.callbacks import ModelCheckpoint, TensorBoard
 
-from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Input
+from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Input, Dropout
 from keras.optimizers import Adam
 
 def normalization(x, mean):
@@ -59,7 +59,9 @@ def build_vgg_model(image_width, image_hight, nb_classes):
     x = base_model.layers[-1].output
     x = Flatten(name='flatten')(x)
     x = Dense(4096, activation='relu', name='fc1')(x)
+    x = Dropout(0.5)(x)
     x = Dense(4096, activation='relu', name='fc2')(x)
+    x = Dropout(0.5)(x)
     prediction = Dense(nb_classes, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=img_input, outputs=prediction)
