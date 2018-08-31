@@ -5,12 +5,13 @@ import numpy as np
 from time import time
 from glob import glob
 
-from keras.models import Model
+from keras.models import Model, Sequential
 from keras.utils import np_utils
 from keras.applications import VGG16
 from keras.callbacks import ModelCheckpoint, TensorBoard
+from keras.regularizers import l2
 
-from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Input, Dropout
+from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Input, Dropout, BatchNormalization, Activation
 from keras.optimizers import Adam
 
 def normalization(x, mean):
@@ -18,6 +19,54 @@ def normalization(x, mean):
     x[..., 1] -= mean[1]
     x[..., 2] -= mean[2]
     return x
+
+def batch_normalization_model(image_width, image_hight, nb_classes):
+    input_shape = (image_width, image_hight, 3)
+
+    # Start Neural Network
+    model = Sequential()
+
+    # convolution 1st layer
+    model.add(Conv2D(64, kernel_size=(3, 3), padding="same",
+                     activation='relu',
+                     input_shape=input_shape))  # 0
+    model.add(BatchNormalization())
+    model.add(Dropout(0.5))  # 3
+    # model.add(MaxPooling2D())
+
+    # convolution 2nd layer
+    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', border_mode="same"))  # 1
+    model.add(BatchNormalization())
+    model.add(MaxPooling2D())
+    model.add(Dropout(0.5))  # 3
+
+    # convolution 3rd layer
+    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', border_mode="same"))  # 1
+    model.add(BatchNormalization())
+    model.add(MaxPooling2D())
+    model.add(Dropout(0.5))  # 3
+
+    # Fully connected 1st layer
+    model.add(Flatten())  # 7
+    model.add(Dense(256, kernel_regularizer=l2(1e-5)))  # 13
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))  # 14
+    model.add(Dropout(0.5))  # 15
+
+    # Fully connected 1st layer
+    model.add(Flatten())  # 7
+    model.add(Dense(256, kernel_regularizer=l2(1e-5)))  # 13
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))  # 14
+    model.add(Dropout(0.5))  # 15
+
+    # Fully connected final layer
+    model.add(Dense(nb_classes))  # 8
+    model.add(Activation('softmax'))  # 9
+
+    print(model.summary())
+
+    return model
 
 def build_vgg_model(image_width, image_hight, nb_classes):
 
@@ -58,13 +107,14 @@ def build_vgg_model(image_width, image_hight, nb_classes):
 
     x = base_model.layers[-1].output
     x = Flatten(name='flatten')(x)
-    x = Dense(4096, activation='relu', name='fc1')(x)
+    x = Dense(4096, activation='relu', name='fc1', kernel_regularizer=l2(0.001))(x)
     x = Dropout(0.5)(x)
-    x = Dense(4096, activation='relu', name='fc2')(x)
+    x = Dense(4096, activation='relu', name='fc2', kernel_regularizer=l2(0.001))(x)
     x = Dropout(0.5)(x)
     prediction = Dense(nb_classes, activation='softmax', name='predictions')(x)
 
     model = Model(inputs=img_input, outputs=prediction)
+    model.load_weights('/home/bo/Desktop/DataSet/output/model.h5py')
     print(model.summary())
     return model
 
@@ -168,6 +218,7 @@ def medicine_classifier_training_run(train_folder, test_folder, image_width, ima
     # bulding model
     model = build_vgg_model(image_width, image_hight, nb_classes=len(class_mapping))
     #model = build_self_made_model(image_width, image_hight, nb_classes=len(class_mapping))
+    #model = batch_normalization_model(image_width, image_hight, nb_classes=len(class_mapping))
 
     # optimizer
     adam = Adam(lr=1e-6)
@@ -179,13 +230,13 @@ def medicine_classifier_training_run(train_folder, test_folder, image_width, ima
 
     # callbacks
     filepath = os.path.join(model_save_folder, 'model.h5py')
-    weights = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, save_weights_only=True,
+    weights = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, save_weights_only=True,
                               mode='auto', period=1)
     tensorboard = TensorBoard(log_dir=os.path.join(model_save_folder, "logs").format(time()))
 
     print('start training ...')
     # Another way to train the model
-    model.fit(train_images, train_labels, epochs=50, batch_size=5, callbacks=[weights, tensorboard], validation_data=(test_images, test_labels))
+    model.fit(train_images, train_labels, epochs=100, batch_size=5, callbacks=[weights, tensorboard], validation_data=(test_images, test_labels))
 
 
 
