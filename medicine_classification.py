@@ -31,30 +31,27 @@ def batch_normalization_model(image_width, image_hight, nb_classes):
                      activation='relu',
                      input_shape=input_shape))  # 0
     model.add(BatchNormalization())
-    model.add(Dropout(0.5))  # 3
-    # model.add(MaxPooling2D())
+    model.add(MaxPooling2D(strides=(2, 2)))
 
     # convolution 2nd layer
     model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', border_mode="same"))  # 1
     model.add(BatchNormalization())
-    model.add(MaxPooling2D())
-    model.add(Dropout(0.5))  # 3
+    model.add(MaxPooling2D(strides=(2, 2)))
 
     # convolution 3rd layer
     model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', border_mode="same"))  # 1
     model.add(BatchNormalization())
-    model.add(MaxPooling2D())
-    model.add(Dropout(0.5))  # 3
+    model.add(MaxPooling2D(strides=(2, 2)))
 
     # Fully connected 1st layer
     model.add(Flatten())  # 7
+
     model.add(Dense(256, kernel_regularizer=l2(1e-5)))  # 13
     model.add(BatchNormalization())
     model.add(Activation('relu'))  # 14
     model.add(Dropout(0.5))  # 15
 
     # Fully connected 1st layer
-    model.add(Flatten())  # 7
     model.add(Dense(256, kernel_regularizer=l2(1e-5)))  # 13
     model.add(BatchNormalization())
     model.add(Activation('relu'))  # 14
@@ -246,5 +243,6 @@ if __name__ == '__main__':
     image_width = 224
     image_hight = 224
     model_save_folder = '/home/bo/Desktop/DataSet/output'
-    medicine_classifier_training_run(train_folder, test_folder, image_width, image_hight, model_save_folder)
+    #medicine_classifier_training_run(train_folder, test_folder, image_width, image_hight, model_save_folder)
+    model = batch_normalization_model(image_width, image_hight, nb_classes=7)
 
