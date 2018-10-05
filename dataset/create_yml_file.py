@@ -17,7 +17,7 @@ CLASS_NAMES = ['roads']
 
 GT_TYPE = "categorial" # or categorial / bbox
 
-PREFIX = '/mnt/disks/here/patches_osm/san_fancisco'
+PREFIX = '/mnt/disks/here/patches_osm/san_fancisco/'
 
 IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'masks'  #Only name, not full path
