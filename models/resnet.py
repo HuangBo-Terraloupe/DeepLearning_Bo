@@ -9,6 +9,7 @@ from keras.layers import Activation
 from keras.layers import Convolution2D, AtrousConvolution2D
 from keras.layers import BatchNormalization
 import keras.backend as backend
+from keras.applications import ResNet50
 
 
 def identity_block(input_tensor, kernel_size, filters, stage, block, dilation=(1, 1)):

@@ -4,28 +4,27 @@ import yaml
 from os import listdir
 from random import shuffle
 
-
 #########################################################################
 #================== Set these ======================================
 
-NAME = 'Hollywood' #Name of the dataset (optional)
+NAME = 'San Francisco here' #Name of the dataset (optional)
 
 IMG_TYPE= "ortho"  # optional
 IMG_CHANNELS = "rgb"
 SOURCE_BITDEPTH = 8
 
-CLASS_NAMES = ['object']
+CLASS_NAMES = ['roads']
 
-GT_TYPE = "bbox" # or categorial / bbox
+GT_TYPE = "categorial" # or categorial / bbox
 
-PREFIX = '/home/ga58zak/Hollywood_dataset/'
+PREFIX = '/mnt/disks/here/patches_osm/san_fancisco'
 
 IMAGE_DIR_NAME = 'images'
-MASKS_DIR_NAME = 'annotations'  #Only name, not full path
-IMG_EXT = 'jpg'  #Images extensions
-MASKS_EXT = 'json'  #Masks extensions
-OUTFILE_NAME = '/home/ga58zak/Hollywood_dataset/hollywood.yml'
-TRAIN_RATIO = [0.95, 0.05, 0.0]  # Training set ratio  Between 0-1
+MASKS_DIR_NAME = 'masks'  #Only name, not full path
+IMG_EXT = 'png'  #Images extensions
+MASKS_EXT = 'png'  #Masks extensions
+OUTFILE_NAME = '/home/bo_huang/here/San_Francisco_road_segmentation/san_francisco.yml'
+TRAIN_RATIO = [0.8, 0.1, 0.1]  # Training set ratio  Between 0-1
 
 
 
@@ -107,5 +106,5 @@ dataset = {"name": NAME,
            'testing': test
            }
 
-f = open(os.path.join(PREFIX, OUTFILE_NAME), 'wb')
+f = open(os.path.join(PREFIX, OUTFILE_NAME), 'w')
 yaml.dump(dataset, f, default_flow_style=False)
