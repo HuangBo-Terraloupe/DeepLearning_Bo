@@ -5,7 +5,7 @@ from random import shuffle
 import numpy as np
 
 def calculate_mean(image_folder, image_extension, number_samples):
-    images = glob(image_folder + '*/.' + str(image_extension))
+    images = glob(image_folder + '/*.' + str(image_extension))
     shuffle(images)
 
     if number_samples > len(images):
@@ -23,11 +23,10 @@ def calculate_mean(image_folder, image_extension, number_samples):
     return image_bgr_mean
 
 
-
 @click.command()
 @click.argument('image_folder')
 @click.argument('image_extension')
-@click.argument('number_samples')
+@click.option('--number_samples', type=int, default = 2000)
 
 def main(image_folder, image_extension, number_samples):
     calculate_mean(image_folder, image_extension, number_samples)
