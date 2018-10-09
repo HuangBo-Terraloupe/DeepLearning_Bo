@@ -4,6 +4,9 @@ import yaml
 from os import listdir
 from random import shuffle
 
+import cv2
+import numpy as np
+
 #########################################################################
 #================== Set these ======================================
 
@@ -17,16 +20,18 @@ CLASS_NAMES = ['roads']
 
 GT_TYPE = "categorial" # or categorial / bbox
 
-PREFIX = '/mnt/disks/here/patches_osm/san_fancisco/'
+PREFIX = '/data/here/patches_osm/'
 
-IMAGE_DIR_NAME = 'images'
-MASKS_DIR_NAME = 'masks'  #Only name, not full path
-IMG_EXT = 'png'  #Images extensions
-MASKS_EXT = 'png'  #Masks extensions
-OUTFILE_NAME = '/home/bo_huang/here/San_Francisco_road_segmentation/san_francisco.yml'
-TRAIN_RATIO = [0.8, 0.1, 0.1]  # Training set ratio  Between 0-1
+IMAGE_DIR_NAME = 'san_fancisco/images'
+MASKS_DIR_NAME = 'san_fancisco/masks'  #Only name, not full path
+IMG_EXT = '.png'  #Images extensions
+MASKS_EXT = '.png'  #Masks extensions
+OUTFILE_NAME = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/san_francisco.yml'
+TRAIN_RATIO = [0.9, 0.1, 0.0]  # Training set ratio  Between 0-1
 
-
+N_categories = 3
+Add_Probs = False
+category_diff_ratio = 0.03
 
 # #########################################################################
 # #================== Set these ======================================
@@ -80,22 +85,61 @@ n_train = int(total_images * TRAIN_RATIO[0])
 n_val = int(total_images * TRAIN_RATIO[1])
 n_test = int(total_images * TRAIN_RATIO[2])
 
-
 train_list = image_paths[0:n_train]
 val_list = image_paths[n_train: n_train + n_val]
 test_list = image_paths[n_train + n_val: n_train + n_val + n_test]
-
-
 
 mask_train_list = masks_paths[0:n_train]
 mask_val_list = masks_paths[n_train: n_train + n_val]
 mask_test_list = masks_paths[n_train + n_val: n_train + n_val + n_test]
 
+if Add_Probs is True:
+    # probability sampling
+    static_dic = {'negative': 0, 'positive': 0, 'median':0}
+    for i, file in enumerate(masks_paths):
+        mask_file = os.path.join(PREFIX, file)
+        mask_file = cv2.imread(mask_file, cv2.IMREAD_ANYDEPTH)
+        if np.count_nonzero(mask_file) == (mask_file.shape[0]*mask_file.shape[1]):
+            static_dic['negative'] = static_dic['negative'] + 1
+        elif np.count_nonzero(mask_file)/(mask_file.shape[0]*mask_file.shape[1]) > category_diff_ratio:
+            static_dic['positive'] = static_dic['positive'] + 1
+        else:
+            static_dic['median'] = static_dic['median'] + 1
 
-train = {'images': train_list, 'labels': mask_train_list}
-val = {'images': val_list, 'labels': mask_val_list}
-test = {'images': test_list, 'labels': mask_test_list}
-    
+    prob_negative = float(static_dic['negative']) / (len(masks_paths) * N_categories)
+    prob_positive = float(static_dic['positive']) / (len(masks_paths) * N_categories)
+    prob_median = float(static_dic['median']) / (len(masks_paths) * N_categories)
+
+    print('Statistic Info:')
+    print(static_dic)
+    print('positive, median, negative', prob_positive, prob_median, prob_negative)
+
+    prob_list = []
+
+    for i, file in enumerate(masks_paths):
+        mask_file = os.path.join(PREFIX, file)
+        mask_file = cv2.imread(mask_file, cv2.IMREAD_ANYDEPTH)
+        if np.count_nonzero(mask_file) == (mask_file.shape[0]*mask_file.shape[1]):
+            prob_list.append(prob_negative)
+        elif np.count_nonzero(mask_file)/(mask_file.shape[0]*mask_file.shape[1]) > category_diff_ratio:
+            prob_list.append(prob_positive)
+        else:
+            prob_list.append(prob_median)
+
+
+    probs_train_list = prob_list[0:n_train]
+    probs_val_list = prob_list[n_train: n_train + n_val]
+    probs_test_list = prob_list[n_train + n_val: n_train + n_val + n_test]
+
+    train = {'images': train_list, 'labels': mask_train_list, 'probs':probs_train_list}
+    val = {'images': val_list, 'labels': mask_val_list, 'probs':probs_val_list}
+    test = {'images': test_list, 'labels': mask_test_list, 'probs':probs_test_list}
+
+else:
+    train = {'images': train_list, 'labels': mask_train_list}
+    val = {'images': val_list, 'labels': mask_val_list}
+    test = {'images': test_list, 'labels': mask_test_list}
+
 
 dataset = {"name": NAME, 
            "prefix": PREFIX,
