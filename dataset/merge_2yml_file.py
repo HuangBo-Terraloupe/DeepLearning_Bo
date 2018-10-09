@@ -1,5 +1,6 @@
 import click
 import yaml
+import numpy as np
 
 @click.command()
 @click.argument("yml_files_one", type=click.Path(exists=True, dir_okay=False))
@@ -20,10 +21,34 @@ def main(yml_files_one, yml_files_two, output_yml):
     test = {'images': data1['testing']['images'] + data2['testing']['images'],
              'labels': data1['testing']['labels'] + data2['testing']['labels']}
 
+    try:
+        index_array = np.random.permutation(len(train['images']))
+        train['images'] = list(np.array(train['images'])[index_array])
+        train['labels'] = list(np.array(train['labels'])[index_array])
+    except:
+        print('training set not shuffeled ...')
+        pass
+
+    try:
+        index_array = np.random.permutation(len(val['images']))
+        val['images'] = list(np.array(val['images'])[index_array])
+        val['labels'] = list(np.array(val['labels'])[index_array])
+    except:
+        print('validation set not shuffeled ...')
+        pass
+
+    try:
+        index_array = np.random.permutation(len(test['images']))
+        test['images'] = list(np.array(test['images'])[index_array])
+        test['labels'] = list(np.array(test['labels'])[index_array])
+    except:
+        print('testing set not shuffeled ...')
+        pass
+
     import pdb
     pdb.set_trace()
 
-    dataset = {"name": data1['name'],
+    dataset = {"name": 'Merge',
                "prefix": data1['prefix'],
                "data": data1['data'],
                "ground_truth": data1['ground_truth'],
@@ -31,8 +56,6 @@ def main(yml_files_one, yml_files_two, output_yml):
                'validation': val,
                'testing': test
                }
-
-
 
     f = open(output_yml, 'w')
     yaml.dump(dataset, f, default_flow_style=False)
