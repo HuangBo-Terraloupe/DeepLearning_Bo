@@ -2,9 +2,9 @@ import click
 import yaml
 
 @click.command()
-@click.argument("yml_files_one", type=click.Path(exists=True, dir_okay=False), nargs=-1)
-@click.argument("yml_files_two", type=click.Path(exists=True, dir_okay=False), nargs=-1)
-@click.argument("output_yml", type=click.Path(exists=False, dir_okay=False), nargs=1)
+@click.argument("yml_files_one", type=click.Path(exists=True, dir_okay=False))
+@click.argument("yml_files_two", type=click.Path(exists=True, dir_okay=False))
+@click.argument("output_yml", type=click.Path(exists=False, dir_okay=False))
 def main(yml_files_one, yml_files_two, output_yml):
 
     with open(yml_files_one, 'rb') as fp:
