@@ -22,11 +22,11 @@ GT_TYPE = "categorial" # or categorial / bbox
 
 PREFIX = '/data/here/patches_osm/'
 
-IMAGE_DIR_NAME = 'san_fancisco/images'
-MASKS_DIR_NAME = 'san_fancisco/masks'  #Only name, not full path
+IMAGE_DIR_NAME = 'houston/images'
+MASKS_DIR_NAME = 'houston/masks'  #Only name, not full path
 IMG_EXT = '.png'  #Images extensions
 MASKS_EXT = '.png'  #Masks extensions
-OUTFILE_NAME = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/san_francisco.yml'
+OUTFILE_NAME = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/houston.yml'
 TRAIN_RATIO = [0.9, 0.1, 0.0]  # Training set ratio  Between 0-1
 
 N_categories = 3
@@ -69,7 +69,11 @@ masks_dir = PREFIX + MASKS_DIR_NAME + '/'
 masks_paths = []
 
 ids = listdir(masks_dir)
-shuffle(ids)
+
+import pdb
+pdb.set_trace()
+
+#shuffle(ids)
 
 for id in ids:
 
