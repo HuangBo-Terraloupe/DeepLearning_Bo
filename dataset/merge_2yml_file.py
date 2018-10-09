@@ -21,6 +21,9 @@ def main(yml_files_one, yml_files_two, output_yml):
     test = {'images': data1['testing']['images'] + data2['testing']['images'],
              'labels': data1['testing']['labels'] + data2['testing']['labels']}
 
+    import pdb
+    pdb.set_trace()
+
     try:
         index_array = np.random.permutation(len(train['images']))
         train['images'] = list(np.array(train['images'])[index_array])
