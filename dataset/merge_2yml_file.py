@@ -20,6 +20,9 @@ def main(yml_files_one, yml_files_two, output_yml):
     test = {'images': data1['testing']['images'] + data2['testing']['images'],
              'labels': data1['testing']['labels'] + data2['testing']['labels']}
 
+    import pdb
+    pdb.set_trace()
+
     dataset = {"name": data1['name'],
                "prefix": data1['prefix'],
                "data": data1['data'],
@@ -29,8 +32,7 @@ def main(yml_files_one, yml_files_two, output_yml):
                'testing': test
                }
 
-    import pdb
-    pdb.set_trace()
+
 
     f = open(output_yml, 'w')
     yaml.dump(dataset, f, default_flow_style=False)
