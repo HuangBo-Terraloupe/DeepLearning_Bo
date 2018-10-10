@@ -69,12 +69,12 @@ masks_dir = PREFIX + MASKS_DIR_NAME + '/'
 masks_paths = []
 
 ids = listdir(masks_dir)
-ids.sort()
-print('The number of training data before', len(ids))
-
-ids = ids[0 : int(len(ids) / 2.0)]
-
-print('The number of training data before', len(ids))
+# ids.sort()
+# print('The number of training data before', len(ids))
+#
+# ids = ids[0 : int(len(ids) / 2.0)]
+#
+# print('The number of training data before', len(ids))
 
 shuffle(ids)
 
