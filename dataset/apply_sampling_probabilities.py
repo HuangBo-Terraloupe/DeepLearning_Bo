@@ -24,8 +24,6 @@ def run(yml_file, yml_save_path, category_diff_ratio=None):
             if np.all(mask_file==0):
                 static_dic['negative'] = static_dic['negative'] + 1
             elif (float(np.count_nonzero(mask_file)) / (mask_file.shape[0] * mask_file.shape[1])) > category_diff_ratio:
-                print((float(np.count_nonzero(mask_file)) / (mask_file.shape[0] * mask_file.shape[1])))
-                print(category_diff_ratio)
                 static_dic['positive'] = static_dic['positive'] + 1
             else:
                 static_dic['median'] = static_dic['median'] + 1
@@ -106,7 +104,6 @@ def run(yml_file, yml_save_path, category_diff_ratio=None):
             else:
                 validation_prob_list.append(prob_median)
 
-
     testing_masks = spec["testing"]["labels"]
     if len(testing_masks) > 0:
         print('calculating sampling probabilities for validation set ...')
@@ -152,6 +149,12 @@ def run(yml_file, yml_save_path, category_diff_ratio=None):
             else:
                 testing_prob_list.append(prob_median)
 
+
+    print('The probability sum of training set ...', np.sum(train_prob_list))
+    print('The probability sum of validation set ...', np.sum(validation_prob_list))
+    print('The probability sum of testing set ...', np.sum(testing_prob_list))
+
+
     print('probabilities are done... now save them into yml file ...')
     train = {'images': spec["training"]["images"], 'labels': spec["training"]["labels"], 'probability': train_prob_list}
     val = {'images': spec["validation"]["images"], 'labels': spec["validation"]["labels"], 'probability': validation_prob_list}
@@ -171,7 +174,12 @@ def run(yml_file, yml_save_path, category_diff_ratio=None):
 
 
 if __name__ == '__main__':
-    yml_file = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/merge.yml'
-    yml_save_path = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/sampled_merge.yml'
+    yml_file = '/home/terraloupe/san_francisco.yml'
+    yml_save_path = '/home/terraloupe/sampled_san_francisco.yml'
     category_diff_ratio = 0.1
     run(yml_file, yml_save_path, category_diff_ratio=category_diff_ratio)
+
+    # yml_file = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/merge.yml'
+    # yml_save_path = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/sampled_merge.yml'
+    # category_diff_ratio = 0.1
+    # run(yml_file, yml_save_path, category_diff_ratio=category_diff_ratio)
