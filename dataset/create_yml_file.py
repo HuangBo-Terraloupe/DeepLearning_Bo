@@ -18,19 +18,19 @@ SOURCE_BITDEPTH = 8
 
 CLASS_NAMES = ['roads']
 
-GT_TYPE = "categorial" # or categorial / bbox
+GT_TYPE = "semseg" # semseg, detection, bbox
 
 PREFIX = '/data/here/patches_osm/'
 
-IMAGE_DIR_NAME = 'houston/images'
-MASKS_DIR_NAME = 'houston/masks'  #Only name, not full path
+IMAGE_DIR_NAME = 'san_fancisco/images'
+MASKS_DIR_NAME = 'san_fancisco/masks'  #Only name, not full path
 IMG_EXT = '.png'  #Images extensions
 MASKS_EXT = '.png'  #Masks extensions
-OUTFILE_NAME = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/houston.yml'
+OUTFILE_NAME = '/home/bo_huang/here/San_Francisco_road_segmentation/san_francisco_sampling.yml'
 TRAIN_RATIO = [0.9, 0.1, 0.0]  # Training set ratio  Between 0-1
 
 N_categories = 3
-Add_Probs = False
+Add_Probs = True
 category_diff_ratio = 0.03
 
 # #########################################################################
@@ -138,9 +138,9 @@ if Add_Probs is True:
     probs_val_list = prob_list[n_train: n_train + n_val]
     probs_test_list = prob_list[n_train + n_val: n_train + n_val + n_test]
 
-    train = {'images': train_list, 'labels': mask_train_list, 'probs':probs_train_list}
-    val = {'images': val_list, 'labels': mask_val_list, 'probs':probs_val_list}
-    test = {'images': test_list, 'labels': mask_test_list, 'probs':probs_test_list}
+    train = {'images': train_list, 'labels': mask_train_list, 'probability':probs_train_list}
+    val = {'images': val_list, 'labels': mask_val_list, 'probability':probs_val_list}
+    test = {'images': test_list, 'labels': mask_test_list, 'probability':probs_test_list}
 
 else:
     train = {'images': train_list, 'labels': mask_train_list}
