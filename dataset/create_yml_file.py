@@ -16,7 +16,7 @@ IMG_TYPE= "ortho"  # optional
 IMG_CHANNELS = "rgb"
 SOURCE_BITDEPTH = 8
 
-CLASS_NAMES = ['roads']
+CLASS_NAMES = ['background', 'roads']
 
 GT_TYPE = "semseg" # semseg, detection, bbox
 
