@@ -174,12 +174,12 @@ def run(yml_file, yml_save_path, category_diff_ratio=None):
 
 
 if __name__ == '__main__':
-    yml_file = '/home/terraloupe/san_francisco.yml'
-    yml_save_path = '/home/terraloupe/sampled_san_francisco.yml'
-    category_diff_ratio = 0.1
-    run(yml_file, yml_save_path, category_diff_ratio=category_diff_ratio)
-
-    # yml_file = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/merge.yml'
-    # yml_save_path = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/sampled_merge.yml'
+    # yml_file = '/home/terraloupe/san_francisco.yml'
+    # yml_save_path = '/home/terraloupe/sampled_san_francisco.yml'
     # category_diff_ratio = 0.1
     # run(yml_file, yml_save_path, category_diff_ratio=category_diff_ratio)
+
+    yml_file = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/merge.yml'
+    yml_save_path = '/home/bo_huang/here/Huston_SanFrancisco_road_segmentation/sampled_merge.yml'
+    category_diff_ratio = 0.1
+    run(yml_file, yml_save_path, category_diff_ratio=category_diff_ratio)
