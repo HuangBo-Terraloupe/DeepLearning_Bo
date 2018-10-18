@@ -20,17 +20,17 @@ CLASS_NAMES = ['background', 'roads']
 
 GT_TYPE = "semseg" # semseg, detection, bbox
 
-PREFIX = '/data/here/patches_osm/'
+PREFIX = '/data/here/'
 
-IMAGE_DIR_NAME = 'san_fancisco/images'
-MASKS_DIR_NAME = 'san_fancisco/masks'  #Only name, not full path
+IMAGE_DIR_NAME = 'houston/images_30'
+MASKS_DIR_NAME = 'houston/images_30'  #Only name, not full path
 IMG_EXT = '.png'  #Images extensions
 MASKS_EXT = '.png'  #Masks extensions
-OUTFILE_NAME = '/home/bo_huang/here/San_Francisco_road_segmentation/san_francisco_sampling.yml'
-TRAIN_RATIO = [0.9, 0.1, 0.0]  # Training set ratio  Between 0-1
+OUTFILE_NAME = '//data/here/houston.yml'
+TRAIN_RATIO = [1, 0.0, 0.0]  # Training set ratio  Between 0-1
 
 N_categories = 3
-Add_Probs = True
+Add_Probs = False
 category_diff_ratio = 0.03
 
 # #########################################################################
