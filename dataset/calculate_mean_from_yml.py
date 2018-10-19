@@ -22,6 +22,8 @@ def calculate_mean(yml_file, number_channels, number_samples):
         print(i)
         print(os.path.join(spec['prefix'], filename))
         image = cv2.imread(os.path.join(spec['prefix'], filename))
+        if image is None:
+            continue
         image = np.asarray(image, dtype=np.float32)
         image_bgr_mean += image.mean(axis=(0, 1)) / number_samples
 
