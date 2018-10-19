@@ -19,6 +19,7 @@ def calculate_mean(yml_file, number_channels, number_samples):
 
     image_bgr_mean = np.zeros(number_channels)
     for i, filename in enumerate(image_list[0:number_samples]):
+        print(i)
         #print(os.path.join(spec['prefix'], filename))
         image = cv2.imread(os.path.join(spec['prefix'], filename))
         image = np.asarray(image, dtype=np.float32)
