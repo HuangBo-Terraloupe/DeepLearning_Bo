@@ -90,7 +90,7 @@ def generate_yml(experiment_name, image_type, image_channel, source_bitdepth, cl
 @click.argument("prefix", type=click.Path(exists=False, dir_okay=True))
 @click.argument("images_dir_name", type=click.Path(exists=False, dir_okay=True))
 @click.argument("masks_dir_name", type=click.Path(exists=False, dir_okay=True))
-@click.argument("outputfile_name", type=click.Path(exists=True, dir_okay=True))
+@click.argument("outputfile_name", type=click.Path(exists=False, dir_okay=True))
 
 @click.option('--image_type', type=str, default='ortho')
 @click.option('--image_channel', type=str, default='rgb')
