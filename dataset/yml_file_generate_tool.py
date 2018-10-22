@@ -38,8 +38,8 @@ def generate_yml(experiment_name, image_type, image_channel, source_bitdepth, cl
     image_paths = []
     masks_paths = []
 
-    image_ids = glob(images_dir + '/*' + image_ext)
-    mask_ids = glob(masks_dir + '/*' + mask_ext)
+    image_ids = glob(images_dir + '*' + image_ext)
+    mask_ids = glob(masks_dir + '*' + mask_ext)
 
     image_ids_names = [os.path.split(f)[1].split('.')[0] for f in image_ids]
     mask_ids_names = [os.path.split(f)[1].split('.')[0] for f in mask_ids]
