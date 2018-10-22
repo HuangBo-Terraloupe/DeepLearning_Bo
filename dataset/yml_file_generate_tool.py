@@ -35,6 +35,8 @@ def generate_yml(experiment_name, image_type, image_channel, source_bitdepth, cl
     # Get image and label lists
     images_dir = os.path.join(prefix, images_dir_name)
     masks_dir = os.path.join(prefix, masks_dir_name)
+
+    print(images_dir, masks_dir)
     image_paths = []
     masks_paths = []
 
