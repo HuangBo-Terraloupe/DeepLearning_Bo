@@ -1,7 +1,9 @@
 import os
 import yaml
+
 from glob import glob
 from random import shuffle
+
 import click
 
 
@@ -94,7 +96,7 @@ def generate_yml(experiment_name, image_type, image_channel, source_bitdepth, cl
 @click.option('--image_channel', type=str, default='rgb')
 @click.option('--source_bitdepth', type=int, default=8)
 @click.option('--class_names', type=str, default='', help="a string of class names, exsample: 'cat, dog' ")
-@click.option("--gt_type", type=str, type=click.Choice(['semseg', 'categorical', 'binary', 'sparse', None]))
+@click.option("--gt_type", type=click.Choice(['semseg', 'categorical', 'binary', 'sparse', None]))
 @click.option("--image_ext", type=str, default='.png')
 @click.option("--mask_ext", type=str, default='.png')
 @click.option("--split_ratio", type=str, default='0.9, 0.1, 0.0')
