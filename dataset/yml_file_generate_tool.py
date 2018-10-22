@@ -47,6 +47,9 @@ def generate_yml(experiment_name, image_type, image_channel, source_bitdepth, cl
     common_names = list(set(image_ids_names).intersection(mask_ids_names))
     shuffle(common_names)
 
+    import pdb
+    pdb.set_trace()
+
     for name in common_names:
         image_path = os.path.join(images_dir, name + image_ext)
         image_paths.append(image_path)
