@@ -33,16 +33,12 @@ def generate_yml(experiment_name, image_type, image_channel, source_bitdepth, cl
     classes = [{"index": i, "name": cls} for i, cls in enumerate(class_names.split(','))]
     ground_truth = {"type": gt_type, "classes": classes}
 
-    # Get image and label lists
-    images_dir = os.path.join(prefix, images_dir_name)
-    masks_dir = os.path.join(prefix, masks_dir_name)
 
-    print(images_dir, masks_dir)
     image_paths = []
     masks_paths = []
 
-    image_ids = glob(prefix + images_dir + '*' + image_ext)
-    mask_ids = glob(prefix + masks_dir + '*' + mask_ext)
+    image_ids = glob(prefix[0:-1] + images_dir_name + '*' + image_ext)
+    mask_ids = glob(prefix[0:-1] + masks_dir_name + '*' + mask_ext)
 
     image_ids_names = [os.path.split(f)[1].split('.')[0] for f in image_ids]
     mask_ids_names = [os.path.split(f)[1].split('.')[0] for f in mask_ids]
@@ -50,14 +46,11 @@ def generate_yml(experiment_name, image_type, image_channel, source_bitdepth, cl
     common_names = list(set(image_ids_names).intersection(mask_ids_names))
     shuffle(common_names)
 
-    import pdb
-    pdb.set_trace()
-
     for name in common_names:
-        image_path = os.path.join(images_dir, name + image_ext)
+        image_path = os.path.join(images_dir_name, name + image_ext)
         image_paths.append(image_path)
 
-        masks_path = os.path.join(masks_dir, name + mask_ext)
+        masks_path = os.path.join(masks_dir_name, name + mask_ext)
         masks_paths.append(masks_path)
 
     total_images = len(image_paths)
