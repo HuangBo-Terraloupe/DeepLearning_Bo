@@ -8,7 +8,8 @@ import click
 
 
 def generate_yml(experiment_name, image_type, image_channel, source_bitdepth, class_names, gt_type, prefix,
-                 images_dir_name, masks_dir_name, image_ext, mask_ext, outputfile_name, split_ratio):
+                 images_dir_name, masks_dir_name, image_ext, mask_ext, outputfile_name, split_ratio
+                 ):
     '''
     Args:
         experiment_name:
@@ -61,6 +62,7 @@ def generate_yml(experiment_name, image_type, image_channel, source_bitdepth, cl
 
     total_images = len(image_paths)
     split_ratio = split_ratio.split(',')
+    split_ratio = [float(f) for f in split_ratio]
     n_train = int(total_images * split_ratio[0])
     n_val = int(total_images * split_ratio[1])
     n_test = int(total_images * split_ratio[2])
