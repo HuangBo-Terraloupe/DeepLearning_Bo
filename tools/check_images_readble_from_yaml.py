@@ -44,6 +44,6 @@ def run(yml_file, n_worker):
 
 
 if __name__ == '__main__':
-    yml_file = '/data/here/houston.yml'
+    yml_file = '/home/bo_huang/here/Here_5030cm_data/5030_here_true.yml'
     n_worker = 12
     run(yml_file, n_worker)
