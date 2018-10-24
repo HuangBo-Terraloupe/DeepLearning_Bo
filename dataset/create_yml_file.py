@@ -22,11 +22,11 @@ GT_TYPE = "semseg" # semseg, detection, bbox
 
 PREFIX = '/data/here/'
 
-IMAGE_DIR_NAME = 'houston/images_30'
-MASKS_DIR_NAME = 'houston/masks_30'  #Only name, not full path
+IMAGE_DIR_NAME = 'san_francisco/images_30'
+MASKS_DIR_NAME = 'san_francisco/masks_30'  #Only name, not full path
 IMG_EXT = '.png'  #Images extensions
 MASKS_EXT = '.png'  #Masks extensions
-OUTFILE_NAME = '/data/here/houston_v1.yml'
+OUTFILE_NAME = '/data/here/san_francisco_v1.yml'
 TRAIN_RATIO = [1, 0.0, 0.0]  # Training set ratio  Between 0-1
 
 N_categories = 3
