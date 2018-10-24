@@ -16,6 +16,8 @@ def check_images(prefix, images_list, worker_id):
         else:
             print('found wrong channel image:', os.path.join(prefix, file))
             wrong_images.append(os.path.join(prefix, file))
+        if i % 500 ==0:
+            print(i)
     with open('/home/bo_huang/wrongimages' + str(worker_id) + '.txt', 'w') as f:
         for item in wrong_images:
             f.write("%s\n" % item)
@@ -42,6 +44,6 @@ def run(yml_file, n_worker):
 
 
 if __name__ == '__main__':
-    yml_file = '/data/here/san_francisco.yml'
+    yml_file = '/data/here/houston.yml'
     n_worker = 12
     run(yml_file, n_worker)
