@@ -43,5 +43,5 @@ def run(yml_file, n_worker):
 
 if __name__ == '__main__':
     yml_file = '/data/here/san_francisco.yml'
-    n_worker = 16
+    n_worker = 12
     run(yml_file, n_worker)
