@@ -31,7 +31,7 @@ def run(input_file, n_worker):
     if type(input_file) is list:
         print('get images from folder ...')
         for folder in input_file:
-            image_list = image_list + glob(folder + '.png')
+            image_list = image_list + glob(folder + '*.png')
 
     else:
         print('get images from yaml ...')
