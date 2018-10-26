@@ -27,6 +27,7 @@ def check_images(images_list):
 def run(input_file, n_worker):
     jobs = []
     image_list = []
+
     if type(input_file) is list:
         for folder in input_file:
             image_list = image_list + glob(folder + '.png')
@@ -38,6 +39,7 @@ def run(input_file, n_worker):
         image_list = [os.path.join(spec['prefix'], f) for f in image_list]
 
     total_num_images = len(image_list)
+    print('total number of images and masks:', total_num_images)
     image_for_each_worker = int(total_num_images / n_worker)
     for i in range(n_worker):
         if i != n_worker -1:
