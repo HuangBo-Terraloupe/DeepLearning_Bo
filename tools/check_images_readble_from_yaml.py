@@ -56,10 +56,8 @@ def run(input_file, n_worker):
 
 if __name__ == '__main__':
     image_folder_1 = '/data/here/houston/images_30/'
-    mask_folder_1 = '/data/here/houston/masks_30/'
     image_folder_2 = '/data/here/san_francisco/images_30/'
-    mask_folder_2 = '/data/here/san_francisco/masks_30/'
-    input_file = [image_folder_1, mask_folder_1, image_folder_2, mask_folder_2]
+    input_file = [image_folder_1, image_folder_2]
 
     n_worker = 64
     run(input_file, n_worker)
