@@ -19,6 +19,8 @@ def run(list_image_folder, downsample_size, n_worker):
     for folder in list_image_folder:
         files = files + glob(folder + '*.png')
 
+    print('total number of images and masks:', len(files))
+
     image_for_each_worker = int(len(files) / n_worker)
     for i in range(n_worker):
         if i != n_worker -1:
