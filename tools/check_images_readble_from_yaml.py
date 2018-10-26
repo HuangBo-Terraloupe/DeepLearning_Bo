@@ -3,47 +3,61 @@ import yaml
 import cv2
 import multiprocessing
 
+from glob import glob
 
-def check_images(prefix, images_list, worker_id):
+
+def check_images(images_list):
     wrong_images = []
     for i, file in enumerate(images_list):
-        image = cv2.imread(os.path.join(prefix, file))
+        image = cv2.imread(file)
         if image is None:
-            print('found empty image:', os.path.join(prefix, file))
-            wrong_images.append(os.path.join(prefix, file))
+            print('found empty image:', file)
+            wrong_images.append(file)
         elif len(image.shape) == 3:
             continue
         else:
-            print('found wrong channel image:', os.path.join(prefix, file))
-            wrong_images.append(os.path.join(prefix, file))
-        if i % 500 ==0:
+            print('found wrong channel image:', file)
+            wrong_images.append( file)
+        if i % 1000 ==0:
             print(i)
-    with open('/home/bo_huang/wrongimages' + str(worker_id) + '.txt', 'w') as f:
+    with open('/home/bo_huang/wrongimages.txt', 'w') as f:
         for item in wrong_images:
             f.write("%s\n" % item)
 
-def run(yml_file, n_worker):
+def run(input_file, n_worker):
     jobs = []
-    with open(yml_file, 'rb') as fp:
-        spec = yaml.load(fp.read())
+    image_list = []
+    if type(input_file) is list:
+        for folder in input_file:
+            image_list = image_list + glob(folder + '.png')
 
-    image_list = spec['training']['images'] + spec['validation']['images'] + spec['testing']['images']
+    else:
+        with open(input_file, 'rb') as fp:
+            spec = yaml.load(fp.read())
+        image_list = spec['training']['images'] + spec['validation']['images'] + spec['testing']['images']
+        image_list = [os.path.join(spec['prefix'], f) for f in image_list]
+
     total_num_images = len(image_list)
     image_for_each_worker = int(total_num_images / n_worker)
     for i in range(n_worker):
         if i != n_worker -1:
             p = multiprocessing.Process(
                 target=check_images,
-                args=(spec['prefix'],image_list[i*image_for_each_worker:(i+1)*image_for_each_worker], i,))
+                args=(image_list[i*image_for_each_worker:(i+1)*image_for_each_worker],))
         else:
             p = multiprocessing.Process(
                 target=check_images,
-                args=(spec['prefix'],image_list[i*image_for_each_worker:], i))
+                args=(image_list[i*image_for_each_worker:],))
         jobs.append(p)
         p.start()
 
 
 if __name__ == '__main__':
-    yml_file = '/home/bo_huang/here/Here_5030cm_data/5030_here_true.yml'
-    n_worker = 16
-    run(yml_file, n_worker)
+    image_folder_1 = '/data/here/houston/images_30/'
+    mask_folder_1 = '/data/here/houston/masks_30/'
+    image_folder_2 = '/data/here/san_francisco/images_30/'
+    mask_folder_2 = '/data/here/san_francisco/masks_30/'
+    input_file = [image_folder_1, mask_folder_1, image_folder_2, mask_folder_2]
+
+    n_worker = 64
+    run(input_file, n_worker)
