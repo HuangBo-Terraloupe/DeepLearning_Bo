@@ -29,10 +29,12 @@ def run(input_file, n_worker):
     image_list = []
 
     if type(input_file) is list:
+        print('get images from folder ...')
         for folder in input_file:
             image_list = image_list + glob(folder + '.png')
 
     else:
+        print('get images from yaml ...')
         with open(input_file, 'rb') as fp:
             spec = yaml.load(fp.read())
         image_list = spec['training']['images'] + spec['validation']['images'] + spec['testing']['images']
