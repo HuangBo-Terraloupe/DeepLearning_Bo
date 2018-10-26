@@ -5,7 +5,9 @@ from glob import glob
 
 def downsample_images(image_list, downsample_size):
     for i, file in enumerate(image_list):
-        print(i)
+
+        if i % 1000 ==0:
+            print(i)
         item = cv2.imread(file)
         cv2.imwrite(file, cv2.resize(item, downsample_size))
 
@@ -32,9 +34,11 @@ def run(list_image_folder, downsample_size, n_worker):
 
 
 if __name__ == '__main__':
-    n_worker = 4
-    image_folder = '/home/terraloupe/Dataset/30cm_data/houston/images/'
-    mask_folder = '/home/terraloupe/Dataset/30cm_data/houston/masks/'
-    folder_list = [image_folder, mask_folder]
+    n_worker = 64
+    image_folder_1 = '/data/here/houston/images_30/'
+    mask_folder_1 = '/data/here/houston/masks_30/'
+    image_folder_2 = '/data/here/san_francisco/images_30/'
+    mask_folder_2 = '/data/here/san_francisco/masks_30/'
+    folder_list = [image_folder_1, mask_folder_1, image_folder_2, mask_folder_2]
     downsample_size = (300, 300)
     run(folder_list, downsample_size, n_worker)
