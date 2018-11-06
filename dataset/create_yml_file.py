@@ -24,8 +24,8 @@ PREFIX = '/data/here/'
 
 IMAGE_DIR_NAME = 'houston/images_30'
 MASKS_DIR_NAME = 'houston/masks_30'  #Only name, not full path
-IMG_EXT = '.png'  #Images extensions
-MASKS_EXT = '.png'  #Masks extensions
+IMG_EXT = '.tif'  #Images extensions
+MASKS_EXT = '.tif'  #Masks extensions
 OUTFILE_NAME = '/data/here/houston_v2.yml'
 TRAIN_RATIO = [1, 0.0, 0.0]  # Training set ratio  Between 0-1
 
