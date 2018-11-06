@@ -52,6 +52,14 @@ mask_train_list = parking_images[15000:] + background_images[5000:] + highway_im
 mask_val_list = parking_images[0:15000] + background_images[0:5000] + highway_images[0:5000]
 mask_test_list = []
 
+train_list = [ 'images/' + f for f in train_list]
+val_list = [ 'images/' + f for f in val_list]
+
+
+mask_train_list = [ 'masks/' + f for f in mask_train_list]
+mask_val_list = [ 'masks/' + f for f in mask_val_list]
+
+
 probs_parking = 0.5 / len(parking_images[15000:])
 probs_background = 0.1 / len(background_images[5000:])
 probs_highway = 0.4 / len(highway_images[5000:])
