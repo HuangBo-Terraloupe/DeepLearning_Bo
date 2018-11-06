@@ -32,9 +32,9 @@ classes = [{"index": i, "name": cls} for i, cls in enumerate(CLASS_NAMES)]
 ground_truth = {"type": GT_TYPE, "classes": classes}
 
 # get images and labels
-parking_images = glob(PREFIX + IMAGE_DIR_NAME + '/' + 'parking*.' + IMG_EXT)
-background_images = glob(PREFIX + IMAGE_DIR_NAME + '/' + 'background*.' + IMG_EXT)
-highway_images = glob(PREFIX + IMAGE_DIR_NAME + '/' + 'highway*.' + IMG_EXT)
+parking_images = glob(PREFIX + IMAGE_DIR_NAME + '/' + 'parking*' + IMG_EXT)
+background_images = glob(PREFIX + IMAGE_DIR_NAME + '/' + 'background*' + IMG_EXT)
+highway_images = glob(PREFIX + IMAGE_DIR_NAME + '/' + 'highway*' + IMG_EXT)
 
 parking_images = [os.path.split(f)[-1] for f in parking_images]
 background_images = [os.path.split(f)[-1] for f in background_images]
