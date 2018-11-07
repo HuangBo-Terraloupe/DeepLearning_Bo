@@ -16,17 +16,17 @@ IMG_TYPE= "ortho"  # optional
 IMG_CHANNELS = "rgb"
 SOURCE_BITDEPTH = 8
 
-CLASS_NAMES = ['background', 'roads']
+CLASS_NAMES = ['background', 'parkings']
 
 GT_TYPE = "semseg" # semseg, detection, bbox
 
-PREFIX = '/data/here/'
+PREFIX = '/home/terraloupe/Dataset/parking/training_data/'
 
-IMAGE_DIR_NAME = 'houston/images_30'
-MASKS_DIR_NAME = 'houston/masks_30'  #Only name, not full path
+IMAGE_DIR_NAME = 'images'
+MASKS_DIR_NAME = 'masks'  #Only name, not full path
 IMG_EXT = '.tif'  #Images extensions
 MASKS_EXT = '.tif'  #Masks extensions
-OUTFILE_NAME = '/data/here/houston_v2.yml'
+OUTFILE_NAME = '/home/terraloupe/parking.yml'
 TRAIN_RATIO = [1, 0.0, 0.0]  # Training set ratio  Between 0-1
 
 N_categories = 3

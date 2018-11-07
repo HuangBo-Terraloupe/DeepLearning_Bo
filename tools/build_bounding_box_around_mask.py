@@ -2,6 +2,7 @@ import os
 import cv2
 import yaml
 import json
+import numpy as np
 import multiprocessing
 
 
@@ -12,7 +13,6 @@ def generate_bbox(mask_list, prefix, annotation_folder):
         mask_img = cv2.imread(mask_file)
         imgray = cv2.cvtColor(mask_img, cv2.COLOR_BGR2GRAY)
         im2, contours, hierarchy = cv2.findContours(imgray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
         annotation_data = {"img_name": mask.split('/')[-1],
                            'bboxes': []
                            }
@@ -28,17 +28,18 @@ def generate_bbox(mask_list, prefix, annotation_folder):
         else:
             for i in range(len(contours)):
                 cnt = contours[i]
-                x, y, w, h = cv2.boundingRect(cnt)
-                x1 = x
-                y1 = y
-                x2 = x + w
-                y2 = y + w
+                rect = cv2.minAreaRect(cnt)
+                box = cv2.boxPoints(rect)
+                box = np.int0(box)
+                xx = box[:, 0]
+                yy = box[:, 1]
+
                 annotation_data['bboxes'].append(
                     {'category': 'parking_area',
-                     'x1': x1,
-                     'x2': x2,
-                     'y1': y1,
-                     'y2': y2,
+                     'x1': int(xx.min()),
+                     'x2': int(xx.max()),
+                     'y1': int(yy.min()),
+                     'y2': int(yy.max()),
                      })
 
         # save annotation
