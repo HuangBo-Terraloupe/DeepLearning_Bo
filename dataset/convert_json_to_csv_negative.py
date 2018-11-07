@@ -12,7 +12,7 @@ def covnert(data_file, data_file_negative, img_set_name_negative, save_dir):
     :param save_dir: save dir to save the csv
     :return:
     '''
-
+0
     with open(data_file, 'r') as fp:
         spec = yaml.load(fp)
     with open(data_file_negative, 'r') as fp:

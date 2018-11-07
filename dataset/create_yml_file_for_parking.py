@@ -24,7 +24,7 @@ IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'masks'  # Only name, not full path
 IMG_EXT = '.tif'  # Images extensions
 MASKS_EXT = '.tif'  # Masks extensions
-OUTFILE_NAME = '/home/bo_huang/parking.yml'
+OUTFILE_NAME = '/home/bo_huang/parking_bbox_detection.yml'
 
 
 data = {"type": IMG_TYPE, "channels": IMG_CHANNELS, "source_bitdepth": SOURCE_BITDEPTH}
@@ -40,36 +40,44 @@ parking_images = [os.path.split(f)[-1] for f in parking_images]
 background_images = [os.path.split(f)[-1] for f in background_images]
 highway_images = [os.path.split(f)[-1] for f in highway_images]
 
-shuffle(parking_images)
+#shuffle(parking_images)
 shuffle(background_images)
 shuffle(highway_images)
 
-train_list = parking_images[15000:] + background_images[5000:] + highway_images[5000:]
-val_list = parking_images[0:15000] + background_images[0:5000] + highway_images[0:5000]
-test_list = []
+nb_parking = len(parking_images)
 
-mask_train_list = parking_images[15000:] + background_images[5000:] + highway_images[5000:]
-mask_val_list = parking_images[0:15000] + background_images[0:5000] + highway_images[0:5000]
-mask_test_list = []
+
+
+train_list = parking_images + background_images[0:int(nb_parking * 0.2)] + highway_images[0:int(nb_parking * 0.8)]
+# val_list = parking_images[0:15000] + background_images[0:5000] + highway_images[0:5000]
+# test_list = []
+#
+mask_train_list = parking_images+ background_images[0:int(nb_parking * 0.2)]  +  highway_images[0:int(nb_parking * 0.8)]
+# mask_val_list = parking_images[0:15000] + background_images[0:5000] + highway_images[0:5000]
+# mask_test_list = []
 
 train_list = ['images/' + f for f in train_list]
-val_list = ['images/' + f for f in val_list]
+#val_list = ['images/' + f for f in val_list]
 
 
 mask_train_list = ['masks/' + f for f in mask_train_list]
-mask_val_list = ['masks/' + f for f in mask_val_list]
+#mask_val_list = ['masks/' + f for f in mask_val_list]
 
 
-probs_parking = 0.5 / len(parking_images[15000:])
-probs_background = 0.1 / len(background_images[5000:])
-probs_highway = 0.4 / len(highway_images[5000:])
+# probs_parking = 0.5 / len(parking_images[15000:])
+# probs_background = 0.1 / len(background_images[5000:])
+# probs_highway = 0.4 / len(highway_images[5000:])
 
-probs_train_list = [probs_parking] * len(parking_images[15000:]) + \
-                   [probs_background] * len(background_images[5000:]) + [probs_highway] * len(highway_images[5000:])
+# probs_train_list = [probs_parking] * len(parking_images[15000:]) + \
+#                    [probs_background] * len(background_images[5000:]) + [probs_highway] * len(highway_images[5000:])
 
-train = {'images': train_list, 'labels': mask_train_list, 'probability': probs_train_list}
-val = {'images': val_list, 'labels': mask_val_list, 'probability': []}
-test = {'images': test_list, 'labels': mask_test_list, 'probability': []}
+# train = {'images': train_list, 'labels': mask_train_list, 'probability': probs_train_list}
+# val = {'images': val_list, 'labels': mask_val_list, 'probability': []}
+# test = {'images': test_list, 'labels': mask_test_list, 'probability': []}
+
+train = {'images': train_list, 'labels': mask_train_list}
+val = {'images': [], 'labels': []}
+test = {'images': [], 'labels': []}
 
 dataset = {"name": NAME,
            "prefix": PREFIX,
