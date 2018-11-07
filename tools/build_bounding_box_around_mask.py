@@ -9,7 +9,7 @@ def convert_bbox(yml_file, annotation_folder):
 
     masks = spec['training']['labels'] + spec['validation']['labels'] + spec['testing']['labels']
     print('The length of masks is:', len(masks))
-    for _, mask in enumerate(masks[0:10]):
+    for _, mask in enumerate(masks):
         mask_file = os.path.join(spec['prefix'], mask)
         mask_img = cv2.imread(mask_file)
         imgray = cv2.cvtColor(mask_img, cv2.COLOR_BGR2GRAY)
