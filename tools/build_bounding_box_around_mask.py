@@ -2,15 +2,13 @@ import os
 import cv2
 import yaml
 import json
+import multiprocessing
 
-def convert_bbox(yml_file, annotation_folder):
-    with open(yml_file, 'rb') as fp:
-        spec = yaml.load(fp.read())
 
-    masks = spec['training']['labels'] + spec['validation']['labels'] + spec['testing']['labels']
-    print('The length of masks is:', len(masks))
-    for _, mask in enumerate(masks):
-        mask_file = os.path.join(spec['prefix'], mask)
+def generate_bbox(mask_list, prefix, annotation_folder):
+
+    for _, mask in enumerate(mask_list):
+        mask_file = os.path.join(prefix, mask)
         mask_img = cv2.imread(mask_file)
         imgray = cv2.cvtColor(mask_img, cv2.COLOR_BGR2GRAY)
         im2, contours, hierarchy = cv2.findContours(imgray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -48,7 +46,35 @@ def convert_bbox(yml_file, annotation_folder):
             json.dump(annotation_data, fp)
 
 
+
+def convert_bbox(yml_file, annotation_folder, n_worker):
+    with open(yml_file, 'rb') as fp:
+        spec = yaml.load(fp.read())
+
+    masks = spec['training']['labels'] + spec['validation']['labels'] + spec['testing']['labels']
+    prefix = spec['prefix']
+    jobs = []
+
+    total_num_images = len(masks)
+    print('total number of images and masks:', total_num_images)
+    image_for_each_worker = int(total_num_images / n_worker)
+
+    for i in range(n_worker):
+        if i != n_worker -1:
+            p = multiprocessing.Process(
+                target=generate_bbox,
+                args=(masks[i*image_for_each_worker:(i+1)*image_for_each_worker], prefix, annotation_folder,))
+        else:
+            p = multiprocessing.Process(
+                target=generate_bbox,
+                args=(masks[i*image_for_each_worker:], prefix, annotation_folder,))
+        jobs.append(p)
+        p.start()
+
+
+
 if __name__ == '__main__':
     yml_file = '/home/bo_huang/parking_bbox_detection.yml'
     annotation_folder = '/mnt/disks/conti-parking/germany_v2/annotations'
-    convert_bbox(yml_file, annotation_folder)
+    n_worker = 24
+    convert_bbox(yml_file, annotation_folder, n_worker)
