@@ -7,7 +7,7 @@ def convert_bbox(yml_file, annotation_folder):
     with open(yml_file, 'rb') as fp:
         spec = yaml.load(fp.read())
 
-    masks = spec['training']['masks'] + spec['validation']['masks'] + spec['testing']['masks']
+    masks = spec['training']['labels'] + spec['validation']['labels'] + spec['testing']['labels']
     print('The length of masks is:', len(masks))
     for _, mask in enumerate(masks[0:10]):
         mask_file = os.path.join(spec['prefix'], mask)
