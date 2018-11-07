@@ -46,3 +46,9 @@ def convert_bbox(yml_file, annotation_folder):
         # save annotation
         with open(os.path.join(annotation_folder, mask.split('/')[-1].split('.')[0] + '.json'), 'w') as fp:
             json.dump(annotation_data, fp)
+
+
+if __name__ == '__main__':
+    yml_file = '/home/bo_huang/parking_bbox_detection.yml'
+    annotation_folder = '/mnt/disks/conti-parking/germany_v2/annotations'
+    convert_bbox(yml_file, annotation_folder)
