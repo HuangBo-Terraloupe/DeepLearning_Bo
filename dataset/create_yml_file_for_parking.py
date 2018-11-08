@@ -21,10 +21,10 @@ GT_TYPE = "semseg"  # semseg, detection, bbox
 PREFIX = '/mnt/disks/conti-parking/germany_v2/'
 
 IMAGE_DIR_NAME = 'images'
-MASKS_DIR_NAME = 'masks'  # Only name, not full path
+MASKS_DIR_NAME = 'annotations'  # Only name, not full path
 IMG_EXT = '.tif'  # Images extensions
-MASKS_EXT = '.tif'  # Masks extensions
-OUTFILE_NAME = '/home/bo_huang/parking_bbox_detection.yml'
+MASKS_EXT = '.json'  # Masks extensions
+OUTFILE_NAME = '/home/bo_huang/parking_bbox_detection_json.yml'
 
 
 data = {"type": IMG_TYPE, "channels": IMG_CHANNELS, "source_bitdepth": SOURCE_BITDEPTH}
@@ -32,51 +32,36 @@ classes = [{"index": i, "name": cls} for i, cls in enumerate(CLASS_NAMES)]
 ground_truth = {"type": GT_TYPE, "classes": classes}
 
 # get images and labels
-parking_images = glob(PREFIX + IMAGE_DIR_NAME + '/' + 'parking*' + IMG_EXT)
-background_images = glob(PREFIX + IMAGE_DIR_NAME + '/' + 'background*' + IMG_EXT)
-highway_images = glob(PREFIX + IMAGE_DIR_NAME + '/' + 'highway*' + IMG_EXT)
+parking_images = glob(PREFIX + MASKS_DIR_NAME + '/' + 'parking*' + MASKS_EXT)
+background_images = glob(PREFIX + MASKS_DIR_NAME + '/' + 'background*' + MASKS_EXT)
+highway_images = glob(PREFIX + MASKS_DIR_NAME + '/' + 'highway*' + MASKS_EXT)
 
 parking_images = [os.path.split(f)[-1] for f in parking_images]
 background_images = [os.path.split(f)[-1] for f in background_images]
 highway_images = [os.path.split(f)[-1] for f in highway_images]
 
-#shuffle(parking_images)
+shuffle(parking_images)
 shuffle(background_images)
 shuffle(highway_images)
 
-nb_parking = len(parking_images)
 
+train_list = parking_images[15000:] + background_images[7500:] + highway_images[7500:]
+val_list = parking_images[0:15000] + background_images[0:7500] + highway_images[0:7500]
+test_list = []
 
-
-train_list = parking_images + background_images[0:int(nb_parking * 0.2)] + highway_images[0:int(nb_parking * 0.8)]
-# val_list = parking_images[0:15000] + background_images[0:5000] + highway_images[0:5000]
-# test_list = []
-#
-mask_train_list = parking_images+ background_images[0:int(nb_parking * 0.2)]  +  highway_images[0:int(nb_parking * 0.8)]
-# mask_val_list = parking_images[0:15000] + background_images[0:5000] + highway_images[0:5000]
-# mask_test_list = []
+mask_train_list = parking_images[15000:] + background_images[7500:] + highway_images[7500:]
+mask_val_list = parking_images[0:15000] + background_images[0:7500] + highway_images[0:7500]
+mask_test_list = []
 
 train_list = ['images/' + f for f in train_list]
-#val_list = ['images/' + f for f in val_list]
+val_list = ['images/' + f for f in val_list]
 
+mask_train_list = ['annotations/' + f for f in mask_train_list]
+mask_val_list = ['annotations/' + f for f in mask_val_list]
 
-mask_train_list = ['masks/' + f for f in mask_train_list]
-#mask_val_list = ['masks/' + f for f in mask_val_list]
-
-
-# probs_parking = 0.5 / len(parking_images[15000:])
-# probs_background = 0.1 / len(background_images[5000:])
-# probs_highway = 0.4 / len(highway_images[5000:])
-
-# probs_train_list = [probs_parking] * len(parking_images[15000:]) + \
-#                    [probs_background] * len(background_images[5000:]) + [probs_highway] * len(highway_images[5000:])
-
-# train = {'images': train_list, 'labels': mask_train_list, 'probability': probs_train_list}
-# val = {'images': val_list, 'labels': mask_val_list, 'probability': []}
-# test = {'images': test_list, 'labels': mask_test_list, 'probability': []}
 
 train = {'images': train_list, 'labels': mask_train_list}
-val = {'images': [], 'labels': []}
+val = {'images': val_list, 'labels': mask_val_list}
 test = {'images': [], 'labels': []}
 
 dataset = {"name": NAME,
