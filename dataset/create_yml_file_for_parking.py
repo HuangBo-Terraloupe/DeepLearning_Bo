@@ -37,6 +37,11 @@ parking_images = [os.path.split(f)[-1] for f in parking_images]
 background_images = [os.path.split(f)[-1] for f in background_images]
 highway_images = [os.path.split(f)[-1] for f in highway_images]
 
+
+parking_images = [f.split('.')[0] for f in parking_images]
+background_images = [f.split('.')[0] for f in background_images]
+highway_images = [f.split('.')[0] for f in highway_images]
+
 shuffle(parking_images)
 shuffle(background_images)
 shuffle(highway_images)
@@ -49,6 +54,12 @@ test_list = []
 mask_train_list = parking_images[5000:] + highway_images[2500:] + background_images[2500:]
 mask_val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
 mask_test_list = []
+
+train_list = [f + IMAGE_DIR_NAME for f in train_list]
+val_list = [f + IMAGE_DIR_NAME for f in val_list]
+
+mask_train_list = [f + MASKS_DIR_NAME for f in mask_train_list]
+mask_val_list = [f + MASKS_DIR_NAME for f in mask_val_list]
 
 train_list = ['images/' + f for f in train_list]
 val_list = ['images/' + f for f in val_list]
