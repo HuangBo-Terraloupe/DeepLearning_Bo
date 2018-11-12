@@ -21,7 +21,7 @@ IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'annotations'  # Only name, not full path
 IMG_EXT = '.tif'  # Images extensions
 MASKS_EXT = '.json'  # Masks extensions
-OUTFILE_NAME = '/home/parking_bbox_detection_final.yml'
+OUTFILE_NAME = '/home/bo_huang/parking_bbox_detection_final.yml'
 
 
 data = {"type": IMG_TYPE, "channels": IMG_CHANNELS, "source_bitdepth": SOURCE_BITDEPTH}
@@ -55,11 +55,11 @@ mask_train_list = parking_images[5000:] + highway_images[2500:] + background_ima
 mask_val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
 mask_test_list = []
 
-train_list = [f + IMAGE_DIR_NAME for f in train_list]
-val_list = [f + IMAGE_DIR_NAME for f in val_list]
+train_list = [f + IMG_EXT for f in train_list]
+val_list = [f + IMG_EXT for f in val_list]
 
-mask_train_list = [f + MASKS_DIR_NAME for f in mask_train_list]
-mask_val_list = [f + MASKS_DIR_NAME for f in mask_val_list]
+mask_train_list = [f + MASKS_EXT for f in mask_train_list]
+mask_val_list = [f + MASKS_EXT for f in mask_val_list]
 
 train_list = ['images/' + f for f in train_list]
 val_list = ['images/' + f for f in val_list]
