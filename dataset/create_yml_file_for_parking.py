@@ -1,12 +1,9 @@
 import os
 import yaml
 
-from os import listdir
 from random import shuffle
 from glob import glob
 
-#########################################################################
-# ================== Set these ======================================
 
 NAME = 'Continental Parking'  # Name of the dataset (optional)
 
@@ -24,7 +21,7 @@ IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'annotations'  # Only name, not full path
 IMG_EXT = '.tif'  # Images extensions
 MASKS_EXT = '.json'  # Masks extensions
-OUTFILE_NAME = '/home/bo_huang/parking_bbox_detection_json.yml'
+OUTFILE_NAME = '/home/parking_bbox_detection_final.yml'
 
 
 data = {"type": IMG_TYPE, "channels": IMG_CHANNELS, "source_bitdepth": SOURCE_BITDEPTH}
@@ -45,12 +42,12 @@ shuffle(background_images)
 shuffle(highway_images)
 
 
-train_list = parking_images[15000:] + background_images[7500:] + highway_images[7500:]
-val_list = parking_images[0:15000] + background_images[0:7500] + highway_images[0:7500]
+train_list = parking_images[5000:] + highway_images[2500:] + background_images[2500:]
+val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
 test_list = []
 
-mask_train_list = parking_images[15000:] + background_images[7500:] + highway_images[7500:]
-mask_val_list = parking_images[0:15000] + background_images[0:7500] + highway_images[0:7500]
+mask_train_list = parking_images[5000:] + highway_images[2500:] + background_images[2500:]
+mask_val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
 mask_test_list = []
 
 train_list = ['images/' + f for f in train_list]

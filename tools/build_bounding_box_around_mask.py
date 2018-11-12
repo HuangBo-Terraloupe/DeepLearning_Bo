@@ -75,7 +75,7 @@ def convert_bbox(yml_file, annotation_folder, n_worker):
 
 
 if __name__ == '__main__':
-    yml_file = '/home/bo_huang/parking_bbox_detection.yml'
-    annotation_folder = '/mnt/disks/conti-parking/germany_v2/annotations'
-    n_worker = 24
+    yml_file = '/home/terraloupe/parking.yml'
+    annotation_folder = '/home/terraloupe/Dataset/parking/training_data/annotations'
+    n_worker = 2
     convert_bbox(yml_file, annotation_folder, n_worker)
