@@ -62,9 +62,9 @@ mask_train_list = [f + MASKS_EXT for f in mask_train_list]
 mask_val_list = [f + MASKS_EXT for f in mask_val_list]
 
 train_list = ['images/' + f for f in train_list]
-val_list = ['annotations/' + f for f in val_list]
+val_list = ['images/' + f for f in val_list]
 
-mask_train_list = ['images/' + f for f in mask_train_list]
+mask_train_list = ['annotations/' + f for f in mask_train_list]
 mask_val_list = ['annotations/' + f for f in mask_val_list]
 
 
