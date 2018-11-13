@@ -93,5 +93,5 @@ def convert_bbox(yml_file, annotation_folder, n_worker):
 if __name__ == '__main__':
     yml_file = '/home/bo_huang/parking_bbox_detection_json.yml'
     annotation_folder = '/mnt/disks/conti-parking/germany_v2/annotations'
-    n_worker = 2
+    n_worker = 24
     convert_bbox(yml_file, annotation_folder, n_worker)
