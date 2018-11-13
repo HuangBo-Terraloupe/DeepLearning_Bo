@@ -2,7 +2,7 @@ import os
 import cv2
 import yaml
 import json
-import numpy as np
+
 import multiprocessing
 
 from skimage.measure import label, regionprops
@@ -35,33 +35,33 @@ def generate_bbox(mask_list, prefix, annotation_folder):
 
             for prop in props:
                 # skip small images
-                if prop['Area'] < 200:
+                if prop['Area'] < 500:
                     continue
 
                 # draw rectangle around segmented coins
-                minr = prop['BoundingBox'][0]
-                minc = prop['BoundingBox'][1]
-                maxr = prop['BoundingBox'][3]
-                maxc = prop['BoundingBox'][4]
+                x1 = prop['BoundingBox'][1]
+                y1 = prop['BoundingBox'][0]
+                x2 = prop['BoundingBox'][4]
+                y2 = prop['BoundingBox'][3]
 
-                if minr < 0:
+                if x1 < 0:
                     print('negative x')
-                    minr = 0
+                    x1 = 0
 
-                elif minc < 0:
+                elif y1 < 0:
                     print('negative y')
-                    minr = 0
+                    y1 = 0
 
-                elif minr >= maxr or minc >= maxc:
+                elif x1 >= x2 or y1 >= y2:
                     print('wrong xy')
                     continue
 
                 annotation_data['bboxes'].append(
                     {'category': 'parking_area',
-                     'x1': minr,
-                     'x2': minc,
-                     'y1': maxr,
-                     'y2': maxc,
+                     'x1': x1,
+                     'x2': x2,
+                     'y1': y1,
+                     'y2': y2,
                      })
 
         # save annotation
@@ -77,6 +77,8 @@ def convert_bbox(yml_file, annotation_folder, n_worker):
     masks = spec['training']['labels'] + spec['validation']['labels'] + spec['testing']['labels']
     prefix = spec['prefix']
     jobs = []
+
+    masks = masks[0:1000]
 
     total_num_images = len(masks)
     print('total number of images and masks:', total_num_images)
