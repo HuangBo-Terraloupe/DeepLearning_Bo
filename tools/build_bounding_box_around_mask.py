@@ -12,11 +12,14 @@ def generate_bbox(mask_list, prefix, annotation_folder):
     for _, mask in enumerate(mask_list):
         mask_file = os.path.join(prefix, mask)
         mask_img = cv2.imread(mask_file)
-        lbl_0 = label(mask_img)
-        props = regionprops(lbl_0)
+
         annotation_data = {"img_name": mask.split('/')[-1],
                            'bboxes': []
                            }
+
+        if mask_img is None:
+            raise ValueError('The mask file does not exist!')
+
         if mask_img.any() == 0:
             annotation_data['bboxes'].append(
                 {'category': '',
@@ -27,6 +30,9 @@ def generate_bbox(mask_list, prefix, annotation_folder):
                  })
 
         else:
+            lbl_0 = label(mask_img)
+            props = regionprops(lbl_0)
+
             for prop in props:
                 # skip small images
                 if prop['Area'] < 200:
