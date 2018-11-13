@@ -78,8 +78,6 @@ def convert_bbox(yml_file, annotation_folder, n_worker):
     prefix = spec['prefix']
     jobs = []
 
-    masks = masks[0:1000]
-
     total_num_images = len(masks)
     print('total number of images and masks:', total_num_images)
     image_for_each_worker = int(total_num_images / n_worker)
