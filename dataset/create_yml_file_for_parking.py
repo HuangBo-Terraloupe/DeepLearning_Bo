@@ -15,13 +15,13 @@ CLASS_NAMES = ['background', 'parking']
 
 GT_TYPE = "semseg"  # semseg, detection, bbox
 
-PREFIX = '/mnt/disks/conti-parking/germany_v2/'
+PREFIX = '/home/terraloupe/Dataset/parking/'
 
-IMAGE_DIR_NAME = 'images'
-MASKS_DIR_NAME = 'annotations'  # Only name, not full path
+IMAGE_DIR_NAME = 'wrong_images'
+MASKS_DIR_NAME = 'wrong_masks'  # Only name, not full path
 IMG_EXT = '.tif'  # Images extensions
-MASKS_EXT = '.json'  # Masks extensions
-OUTFILE_NAME = '/home/bo_huang/parking_bbox_detection_final.yml'
+MASKS_EXT = '.tif'  # Masks extensions
+OUTFILE_NAME = '/home/terraloupe/Dataset/parking/wrong.yml'
 
 
 data = {"type": IMG_TYPE, "channels": IMG_CHANNELS, "source_bitdepth": SOURCE_BITDEPTH}
@@ -47,29 +47,29 @@ shuffle(background_images)
 shuffle(highway_images)
 
 
-train_list = parking_images[5000:] + highway_images[2500:] + background_images[2500:]
-val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
+train_list = parking_images + highway_images + background_images
+#val_list = parking_images + highway_images + background_images
 test_list = []
 
-mask_train_list = parking_images[5000:] + highway_images[2500:] + background_images[2500:]
-mask_val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
+mask_train_list = parking_images + highway_images + background_images
+#mask_val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
 mask_test_list = []
 
 train_list = [f + IMG_EXT for f in train_list]
-val_list = [f + IMG_EXT for f in val_list]
+#val_list = [f + IMG_EXT for f in []]
 
 mask_train_list = [f + MASKS_EXT for f in mask_train_list]
-mask_val_list = [f + MASKS_EXT for f in mask_val_list]
+#mask_val_list = [f + MASKS_EXT for f in []]
 
-train_list = ['images/' + f for f in train_list]
-val_list = ['images/' + f for f in val_list]
+train_list = ['wrong_images/' + f for f in train_list]
+#val_list = ['wrong_images/' + f for f in val_list]
 
-mask_train_list = ['annotations/' + f for f in mask_train_list]
-mask_val_list = ['annotations/' + f for f in mask_val_list]
+mask_train_list = ['wrong_masks/' + f for f in mask_train_list]
+#mask_val_list = ['wrong_masks/' + f for f in mask_val_list]
 
 
 train = {'images': train_list, 'labels': mask_train_list}
-val = {'images': val_list, 'labels': mask_val_list}
+val = {'images': [], 'labels': []}
 test = {'images': [], 'labels': []}
 
 dataset = {"name": NAME,

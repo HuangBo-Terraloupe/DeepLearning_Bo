@@ -5,18 +5,19 @@ import json
 import numpy as np
 import multiprocessing
 
+from skimage.measure import label, regionprops
 
 def generate_bbox(mask_list, prefix, annotation_folder):
 
     for _, mask in enumerate(mask_list):
         mask_file = os.path.join(prefix, mask)
         mask_img = cv2.imread(mask_file)
-        imgray = cv2.cvtColor(mask_img, cv2.COLOR_BGR2GRAY)
-        im2, contours, hierarchy = cv2.findContours(imgray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        lbl_0 = label(mask_img)
+        props = regionprops(lbl_0)
         annotation_data = {"img_name": mask.split('/')[-1],
                            'bboxes': []
                            }
-        if len(contours) == 0:
+        if mask_img.any() == 0:
             annotation_data['bboxes'].append(
                 {'category': '',
                  'x1': '',
@@ -26,20 +27,35 @@ def generate_bbox(mask_list, prefix, annotation_folder):
                  })
 
         else:
-            for i in range(len(contours)):
-                cnt = contours[i]
-                rect = cv2.minAreaRect(cnt)
-                box = cv2.boxPoints(rect)
-                box = np.int0(box)
-                xx = box[:, 0]
-                yy = box[:, 1]
+            for prop in props:
+                # skip small images
+                if prop['Area'] < 200:
+                    continue
+
+                # draw rectangle around segmented coins
+                minr = prop['BoundingBox'][0]
+                minc = prop['BoundingBox'][1]
+                maxr = prop['BoundingBox'][3]
+                maxc = prop['BoundingBox'][4]
+
+                if minr < 0:
+                    print('negative x')
+                    minr = 0
+
+                elif minc < 0:
+                    print('negative y')
+                    minr = 0
+
+                elif minr >= maxr or minc >= maxc:
+                    print('wrong xy')
+                    continue
 
                 annotation_data['bboxes'].append(
                     {'category': 'parking_area',
-                     'x1': int(xx.min()),
-                     'x2': int(xx.max()),
-                     'y1': int(yy.min()),
-                     'y2': int(yy.max()),
+                     'x1': minr,
+                     'x2': minc,
+                     'y1': maxr,
+                     'y2': maxc,
                      })
 
         # save annotation
@@ -75,7 +91,7 @@ def convert_bbox(yml_file, annotation_folder, n_worker):
 
 
 if __name__ == '__main__':
-    yml_file = '/home/terraloupe/parking.yml'
-    annotation_folder = '/home/terraloupe/Dataset/parking/training_data/annotations'
+    yml_file = '/home/bo_huang/parking_bbox_detection_json.yml'
+    annotation_folder = '/mnt/disks/conti-parking/germany_v2/annotations'
     n_worker = 2
     convert_bbox(yml_file, annotation_folder, n_worker)
