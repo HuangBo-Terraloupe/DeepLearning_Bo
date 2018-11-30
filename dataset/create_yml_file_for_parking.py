@@ -46,13 +46,15 @@ shuffle(parking_images)
 shuffle(background_images)
 shuffle(highway_images)
 
+print('parking', len(parking_images), 'bg', len(background_images), 'highway', len(highway_images))
 
-train_list = parking_images + highway_images + background_images
-val_list = parking_images + highway_images + background_images
+
+train_list = parking_images[5000:] + highway_images[2500:] + background_images[2500:]
+val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
 test_list = []
 
-mask_train_list = parking_images + highway_images + background_images
-mask_val_list = parking_images + highway_images + background_images
+mask_train_list = parking_images[5000:] + highway_images[2500:] + background_images[2500:]
+mask_val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
 mask_test_list = []
 
 train_list = [f + IMG_EXT for f in train_list]
