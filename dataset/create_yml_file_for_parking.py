@@ -21,7 +21,7 @@ IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'annotations'  # Only name, not full path
 IMG_EXT = '.tif'  # Images extensions
 MASKS_EXT = '.json'  # Masks extensions
-OUTFILE_NAME = '/home/bo_huang/parking_bbox_detection_final_v1.yml'
+OUTFILE_NAME = '/home/bo_huang/continental_detection/parking_all.yml'
 
 
 data = {"type": IMG_TYPE, "channels": IMG_CHANNELS, "source_bitdepth": SOURCE_BITDEPTH}
@@ -47,12 +47,12 @@ shuffle(background_images)
 shuffle(highway_images)
 
 
-train_list = parking_images[5000:] + highway_images[2500:] + background_images[2500:]
-val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
+train_list = parking_images + highway_images + background_images
+val_list = parking_images + highway_images + background_images
 test_list = []
 
-mask_train_list = parking_images[5000:] + highway_images[2500:] + background_images[2500:]
-mask_val_list = parking_images[0:5000] + highway_images[0:2500] + background_images[0:2500]
+mask_train_list = parking_images + highway_images + background_images
+mask_val_list = parking_images + highway_images + background_images
 mask_test_list = []
 
 train_list = [f + IMG_EXT for f in train_list]
