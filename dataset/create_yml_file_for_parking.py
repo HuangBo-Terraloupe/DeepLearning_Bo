@@ -21,7 +21,7 @@ IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'annotations'  # Only name, not full path
 IMG_EXT = '.tif'  # Images extensions
 MASKS_EXT = '.json'  # Masks extensions
-OUTFILE_NAME = '/home/bo_huang/continental_detection/parking_all.yml'
+OUTFILE_NAME = '/home/bo_huang/continental_detection/parking_all_v1.yml'
 
 
 data = {"type": IMG_TYPE, "channels": IMG_CHANNELS, "source_bitdepth": SOURCE_BITDEPTH}
