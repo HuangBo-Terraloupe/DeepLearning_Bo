@@ -24,8 +24,8 @@ PREFIX = '/home/abhishek/dataset/aoi_hexagon_15/'
 
 IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'masks'  #Only name, not full path
-IMG_EXT = '.tif'  #Images extensions
-MASKS_EXT = '.tif'  #Masks extensions
+IMG_EXT = '.png'  #Images extensions
+MASKS_EXT = '.png'  #Masks extensions
 OUTFILE_NAME = '/home/bo_huang/roads_detection/yml/roads.yml'
 TRAIN_RATIO = [0.9, 1.0, 0.0]  # Training set ratio  Between 0-1
 
