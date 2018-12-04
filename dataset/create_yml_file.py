@@ -16,18 +16,18 @@ IMG_TYPE= "ortho"  # optional
 IMG_CHANNELS = "rgb"
 SOURCE_BITDEPTH = 8
 
-CLASS_NAMES = ['background', 'parkings']
+CLASS_NAMES = ['background', 'roads']
 
 GT_TYPE = "semseg" # semseg, detection, bbox
 
-PREFIX = '/home/terraloupe/Dataset/parking/training_data/'
+PREFIX = '/home/abhishek/dataset/aoi_hexagon_15/'
 
 IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'masks'  #Only name, not full path
 IMG_EXT = '.tif'  #Images extensions
 MASKS_EXT = '.tif'  #Masks extensions
-OUTFILE_NAME = '/home/terraloupe/parking.yml'
-TRAIN_RATIO = [1, 0.0, 0.0]  # Training set ratio  Between 0-1
+OUTFILE_NAME = '/home/bo_huang/roads_detection/yml/roads.yml'
+TRAIN_RATIO = [0.9, 1.0, 0.0]  # Training set ratio  Between 0-1
 
 N_categories = 3
 Add_Probs = False
