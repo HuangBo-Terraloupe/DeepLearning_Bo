@@ -46,7 +46,7 @@ masks_dir = os.path.join(PREFIX, MASKS_DIR_NAME)
 masks_paths = []
 
 
-masks = glob(masks_dir + '/*.' + MASKS_EXT)
+masks = glob(masks_dir + '/*' + MASKS_EXT)
 masks = [os.path.split(f)[-1] for f in masks]
 masks = [f.split('.')[0] for f in masks]
 
