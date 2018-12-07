@@ -6,11 +6,12 @@ from random import shuffle
 
 import cv2
 import numpy as np
+from glob import glob
 
 #########################################################################
 #================== Set these ======================================
 
-NAME = 'San Francisco here' #Name of the dataset (optional)
+NAME = 'Here roads segmentation' #Name of the dataset (optional)
 
 IMG_TYPE= "ortho"  # optional
 IMG_CHANNELS = "rgb"
@@ -20,65 +21,38 @@ CLASS_NAMES = ['background', 'roads']
 
 GT_TYPE = "semseg" # semseg, detection, bbox
 
-PREFIX = '/home/abhishek/dataset/aoi_hexagon_15/'
+PREFIX = '/data/here/texas_thin/'
 
 IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'masks'  #Only name, not full path
 IMG_EXT = '.png'  #Images extensions
-MASKS_EXT = '.png'  #Masks extensions
-OUTFILE_NAME = '/home/bo_huang/roads_detection/yml/roads.yml'
-TRAIN_RATIO = [0.9, 1.0, 0.0]  # Training set ratio  Between 0-1
+MASKS_EXT = '.tif'  #Masks extensions
+OUTFILE_NAME = '/home/bo_huang/here_v1/texas_thin.yml'
+TRAIN_RATIO = [1.0, 0.0, 0.0]  # Training set ratio  Between 0-1
 
 N_categories = 3
 Add_Probs = False
 category_diff_ratio = 0.03
 
-# #########################################################################
-# #================== Set these ======================================
-#
-# NAME = 'harvey roof dataset' #Name of the dataset (optional)
-# IMG_TYPE= "ortho"  # optional
-# IMG_CHANNELS = "rgb"
-# SOURCE_BITDEPTH = 8
-#
-# CLASS_NAMES = ['Rooftop Area',
-#                'Panel',
-#                'Chimney/Ventilation Pipe',
-#                'Roof Window',
-#                ]
-#
-# GT_TYPE = "bbox" # or categorial / bbox
-# PREFIX = '/home/huangbo/HuangBo_Projects/regensburg/'
-# IMAGE_DIR_NAME = 'images'
-# MASKS_DIR_NAME = 'json_merge'  #Only name, not full path
-# IMG_EXT = 'jpg'  #Images extensions
-# MASKS_EXT = 'json'  #Masks extensions
-# OUTFILE_NAME = "/home/huangbo/HuangBo_Projects/regensburg/model_object/regensburg.yml"
-# TRAIN_RATIO = [0.8, 0.1, 0.1]  # Training set ratio  Between 0-1
-#
-# #########################################################################
 
 data = {"type": IMG_TYPE, "channels": IMG_CHANNELS, "source_bitdepth": SOURCE_BITDEPTH}
 classes = [{"index": i, "name": cls} for i, cls in enumerate(CLASS_NAMES)]
 ground_truth = {"type": GT_TYPE, "classes": classes}
                 
 # Get image and label lists                
-images_dir = PREFIX + IMAGE_DIR_NAME + '/'
+images_dir = os.path.join(PREFIX, IMAGE_DIR_NAME)
 image_paths = []
-masks_dir = PREFIX + MASKS_DIR_NAME + '/'
+masks_dir = os.path.join(PREFIX, MASKS_DIR_NAME)
 masks_paths = []
 
-ids = listdir(masks_dir)
-# ids.sort()
-# print('The number of training data before', len(ids))
-#
-# ids = ids[0 : int(len(ids) / 2.0)]
-#
-# print('The number of training data before', len(ids))
 
-shuffle(ids)
+masks = glob(masks_dir + '/*.' + MASKS_EXT)
+masks = [os.path.split(f)[-1] for f in masks]
+masks = [f.split('.')[0] for f in masks]
 
-for id in ids:
+shuffle(masks)
+
+for id in masks:
 
     image_path = IMAGE_DIR_NAME + '/' + id[:-4] + IMG_EXT
     image_paths.append(image_path)
