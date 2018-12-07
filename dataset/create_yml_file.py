@@ -23,11 +23,11 @@ GT_TYPE = "semseg" # semseg, detection, bbox
 
 PREFIX = '/data/here/'
 
-IMAGE_DIR_NAME = 'texas2_thin/images'
-MASKS_DIR_NAME = 'texas2_thin/masks'  #Only name, not full path
+IMAGE_DIR_NAME = 'texas_thin/images'
+MASKS_DIR_NAME = 'texas_thin/masks'  #Only name, not full path
 IMG_EXT = '.png'  #Images extensions
 MASKS_EXT = '.tif'  #Masks extensions
-OUTFILE_NAME = '/home/bo_huang/here_v1/texas2_thin.yml'
+OUTFILE_NAME = '/home/bo_huang/here_v1/texas_thin.yml'
 TRAIN_RATIO = [1.0, 0.0, 0.0]  # Training set ratio  Between 0-1
 
 N_categories = 3
