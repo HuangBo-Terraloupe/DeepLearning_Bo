@@ -46,7 +46,7 @@ shuffle(parking_images)
 # shuffle(background_images)
 # shuffle(highway_images)
 
-print('parking', len(parking_images), 'bg', len(background_images), 'highway', len(highway_images))
+# print('parking', len(parking_images), 'bg', len(background_images), 'highway', len(highway_images))
 
 
 train_list = parking_images[5000:] # + highway_images[2500:] + background_images[2500:]
