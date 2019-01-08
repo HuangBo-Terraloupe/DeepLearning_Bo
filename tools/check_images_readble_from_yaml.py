@@ -17,7 +17,7 @@ def check_images(images_list):
             continue
         else:
             print('found wrong channel image:', file)
-            wrong_images.append( file)
+            wrong_images.append(file)
         if i % 1000 ==0:
             print(i)
     with open('/home/bo_huang/wrongimages.txt', 'w') as f:
