@@ -21,7 +21,7 @@ IMAGE_DIR_NAME = 'images'
 MASKS_DIR_NAME = 'masks'  # Only name, not full path
 IMG_EXT = '.jpg'  # Images extensions
 MASKS_EXT = '.tif'  # Masks extensions
-OUTFILE_NAME = '/home/bo_huang/training_data/parking_manuel.yml'
+OUTFILE_NAME = '/home/bo_huang/training_data/parking_manuel_without_hannover.yml'
 
 
 data = {"type": IMG_TYPE, "channels": IMG_CHANNELS, "source_bitdepth": SOURCE_BITDEPTH}
