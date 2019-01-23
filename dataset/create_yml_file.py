@@ -21,14 +21,14 @@ CLASS_NAMES = ['background', 'roads']
 
 GT_TYPE = "semseg" # semseg, detection, bbox
 
-PREFIX = '/data/here/'
+PREFIX = '/mnt/disks/texas/'
 
-IMAGE_DIR_NAME = 'texas_thin/images'
-MASKS_DIR_NAME = 'texas_thin/masks'  #Only name, not full path
+IMAGE_DIR_NAME = 'texas1/images'
+MASKS_DIR_NAME = 'texas1/masks'  #Only name, not full path
 IMG_EXT = '.png'  #Images extensions
 MASKS_EXT = '.tif'  #Masks extensions
-OUTFILE_NAME = '/home/bo_huang/here_v1/texas_thin.yml'
-TRAIN_RATIO = [1.0, 0.0, 0.0]  # Training set ratio  Between 0-1
+OUTFILE_NAME = 'texas1/texas_1.yml'
+TRAIN_RATIO = [0.8, 0.2, 0.0]  # Training set ratio  Between 0-1
 
 N_categories = 3
 Add_Probs = False
