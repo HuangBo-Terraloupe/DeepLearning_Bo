@@ -23,11 +23,11 @@ GT_TYPE = "semseg" # semseg, detection, bbox
 
 PREFIX = '/mnt/disks/texas/'
 
-IMAGE_DIR_NAME = 'texas1/images'
-MASKS_DIR_NAME = 'texas1/masks'  #Only name, not full path
+IMAGE_DIR_NAME = 'texas2/images'
+MASKS_DIR_NAME = 'texas2/masks'  #Only name, not full path
 IMG_EXT = '.png'  #Images extensions
 MASKS_EXT = '.tif'  #Masks extensions
-OUTFILE_NAME = 'texas1/texas_1.yml'
+OUTFILE_NAME = 'texas2/texas_2.yml'
 TRAIN_RATIO = [0.8, 0.2, 0.0]  # Training set ratio  Between 0-1
 
 N_categories = 3
