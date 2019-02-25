@@ -46,13 +46,15 @@ validation_images = [os.path.join('here_osm_roads/', x) for x in validation_imag
 validation_masks = spec['validation']['labels'][0:number_of_validation_samples]
 validation_masks = [os.path.join('here_osm_roads/', x) for x in validation_masks]
 
-for image in validation_images:
+for image_id, image in enumerate(validation_images):
+    print(image_id)
     blob = bucket.blob(image)
     image_name = os.path.split(image)[-1]
     image_copy_path = os.path.join(image_save_folder, image_name)
     blob.download_to_filename(image_copy_path)
 
-for mask in validation_masks:
+for mask_id, mask in enumerate(validation_masks):
+    print(mask_id)
     blob = bucket.blob(mask)
     mask_name = os.path.split(mask)[-1]
     mask_copy_path = os.path.join(mask_save_folder, mask_name)
