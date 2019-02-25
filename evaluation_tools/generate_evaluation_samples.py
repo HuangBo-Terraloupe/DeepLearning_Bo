@@ -6,12 +6,15 @@ import cv2
 from keras.layers import Activation
 from keras.models import Model
 
-from keras.applications import xception
+from models.xception_strip_1_deconv_upsample import construct
 from skimage.io import imread
 
 from models.deeplab_v3_plus import Deeplabv3
 from gcloud import storage
 from glob import glob
+
+from shutil import copyfile
+
 
 def preprocessing(x, mean):
     x = x.astype(np.float32)
@@ -28,16 +31,44 @@ number_of_validation_samples = 4000
 image_extension = '.png'
 
 yml_file = '/home/bo_huang/model_evaluation/building_validation_samples/mordor_merged_dataset_full.yml'
-weights_file = '/home/bo_huang/model_evaluation/waterbody_validation_samples/model_loss_178-0.017.hdf5'
-mean_file = '/home/bo_huang/model_evaluation/waterbody_validation_samples/mean.npy'
+weights_file = '/home/bo_huang/model_evaluation/pools_validation_samples/model_class_simple_070-147.093.hdf5'
+mean_file = '/home/bo_huang/model_evaluation/pools_validation_samples/mean.npy'
 
-output_save_folder = '/home/bo_huang/model_evaluation/waterbody_validation_samples/predictions'
-image_save_folder = '/home/bo_huang/model_evaluation/waterbody_validation_samples/images'
-mask_save_folder = '/home/bo_huang/model_evaluation/waterbody_validation_samples/masks'
+output_save_folder = '/home/bo_huang/model_evaluation/pools_validation_samples/predictions'
+image_save_folder = '/home/bo_huang/model_evaluation/pools_validation_samples/images'
+mask_save_folder = '/home/bo_huang/model_evaluation/pools_validation_samples/masks'
 
-# download images from gcloud
-gclient = storage.Client()
-bucket = gclient.get_bucket('patches.terraloupe.com')
+
+pool_pos_image_folder = '/home/bo_huang/model_evaluation/pools_validation_samples/12.3f3_3_class_slw_01_dev/pos_patch'
+pool_pos_mask_folder = '/home/bo_huang/model_evaluation/pools_validation_samples/12.3f3_3_class_slw_01_dev/pos_label'
+pool_neg_image_folder = '/home/bo_huang/model_evaluation/pools_validation_samples/12.3f3_3_class_slw_01_dev/neg_patch'
+pool_neg_mask_folder = '/home/bo_huang/model_evaluation/pools_validation_samples/12.3f3_3_class_slw_01_dev/neg_label'
+
+
+pos_images = glob(pool_pos_image_folder + '/*.png')
+pos_masks = glob(pool_pos_mask_folder + '/*.png')
+neg_images = glob(pool_neg_image_folder + '/*.png')
+neg_masks = glob(pool_neg_mask_folder + '/*.png')
+
+
+for i in range(2000):
+    copyfile(pos_images[i], os.path.join(image_save_folder, os.path.split(pos_images[i])[-1]))
+    copyfile(pos_masks[i], os.path.join(mask_save_folder, os.path.split(pos_masks[i])[-1]))
+    copyfile(neg_images[i], os.path.join(image_save_folder, os.path.split(neg_images[i])[-1]))
+    copyfile(neg_masks[i], os.path.join(mask_save_folder, os.path.split(neg_masks[i])[-1]))
+
+inference_masks = glob(mask_save_folder + '/*' + image_extension)
+
+print('filtering buildings in masks')
+for id, image_path in enumerate(inference_masks):
+    print(id)
+    img = imread(image_path)
+    img[img == 2] = 0
+    cv2.imwrite(image_path, img)
+
+# # download images from gcloud
+# gclient = storage.Client()
+# bucket = gclient.get_bucket('patches.terraloupe.com')
 
 
 # # load images path
@@ -92,10 +123,14 @@ bucket = gclient.get_bucket('patches.terraloupe.com')
 #     if id == number_of_validation_samples:
 #         break
 
+
+
 # load model
-base_model = Deeplabv3(weights=None, input_tensor=None, input_shape=(400, 400, 4), classes=2, backbone='xception', OS=16)
-x = Activation(activation='softmax', name='softmax')(base_model.output)
-model = Model(input=base_model.input, output=x)
+# base_model = Deeplabv3(weights=None, input_tensor=None, input_shape=(400, 400, 4), classes=2, backbone='xception', OS=16)
+# x = Activation(activation='softmax', name='softmax')(base_model.output)
+# model = Model(input=base_model.input, output=x)
+
+model = construct(input_shape=(400, 400), n_labels=3, n_channels=3, batch_size=None, freeze=False, weights_path=weights_file)
 
 print(model.summary())
 model.load_weights(weights_file)
@@ -116,6 +151,10 @@ for id, image_path in enumerate(inference_images):
 
     prediction = np.argmax(prediction, axis=-1).astype('uint8')
     prediction = np.squeeze(prediction, axis= 0)
+
+    # filter buildings
+    prediction[prediction == 2] = 0
+
     prediction_save_path = os.path.join(output_save_folder, os.path.split(image_path)[-1].split('.')[0] + '.png')
     print(prediction_save_path)
 
