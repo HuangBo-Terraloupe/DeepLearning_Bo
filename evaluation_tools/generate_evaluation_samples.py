@@ -6,6 +6,8 @@ import cv2
 from keras.layers import Activation
 from keras.models import Model
 
+from keras.applications import xception
+
 from models.deeplab_v3_plus import Deeplabv3
 from gcloud import storage
 from glob import glob
@@ -22,20 +24,21 @@ def preprocessing(x, mean):
 
 
 number_of_validation_samples = 4000
-image_extension = '.jpg'
+image_extension = '.png'
 
 yml_file = '/home/bo_huang/model_evaluation/building_validation_samples/mordor_merged_dataset_full.yml'
-weights_file = '/home/bo_huang/model_evaluation/building_validation_samples/model_iou_008-0.814.hdf5'
-mean_file = '/home/bo_huang/model_evaluation/building_validation_samples/mean.npy'
+weights_file = '/home/bo_huang/model_evaluation/waterbody_validation_samples/model_class_f1_cl0_052-0.961.hdf5'
+mean_file = '/home/bo_huang/model_evaluation/waterbody_validation_samples/mean.npy'
 
-output_save_folder = '/home/bo_huang/model_evaluation/building_validation_samples/predictions'
-image_save_folder = '/home/bo_huang/model_evaluation/building_validation_samples/images'
-mask_save_folder = '/home/bo_huang/model_evaluation/building_validation_samples/masks'
+output_save_folder = '/home/bo_huang/model_evaluation/waterbody_validation_samples/predictions'
+image_save_folder = '/home/bo_huang/model_evaluation/waterbody_validation_samples/images'
+mask_save_folder = '/home/bo_huang/model_evaluation/waterbody_validation_samples/masks'
 
-# # download images from gcloud
-# gclient = storage.Client()
-# bucket = gclient.get_bucket('training-datasets.terraloupe.com')
-#
+# download images from gcloud
+gclient = storage.Client()
+bucket = gclient.get_bucket('patches.terraloupe.com')
+get_ipython().run_line_magic('pinfo2', 'bucket.list_blobs')
+
 # # load images path
 # with open(yml_file, 'rb') as fp:
 #     spec = yaml.load(fp.read())
@@ -62,31 +65,41 @@ mask_save_folder = '/home/bo_huang/model_evaluation/building_validation_samples/
 #
 # print('loading images and masks are done')
 
-# load model
-base_model = Deeplabv3(weights=None, input_tensor=None, input_shape=(400, 400, 3), classes=2, backbone='xception', OS=16)
-x = Activation(activation='softmax', name='softmax')(base_model.output)
-model = Model(input=base_model.input, output=x)
+for id, path in enumerate(bucket.list_blobs(prefix='germany_water_masks/v0/validation/rgbi/')):
+    blob = bucket.get_blob(path)
 
-print(model.summary())
-model.load_weights(weights_file)
+    # get image name
 
-# load mean
-mean = np.load(mean_file)
-mean = mean * 255
-print('mean', mean)
+    blob.download_to_filename('test.jpg')
 
-inference_images = glob(image_save_folder + '/*' + image_extension)
+    if id == 20:
+        break
 
-for id, image_path in enumerate(inference_images):
-
-    print(id)
-    img = cv2.imread(image_path)
-    img = preprocessing(img, mean)
-    prediction = model.predict(img)
-
-    prediction = np.argmax(prediction, axis=-1).astype('uint8')
-    prediction = np.squeeze(prediction, axis= 0)
-    prediction_save_path = os.path.join(output_save_folder, os.path.split(image_path)[-1].split('.')[0] + '.png')
-    print(prediction_save_path)
-
-    cv2.imwrite(prediction_save_path, prediction)
+# # load model
+# base_model = Deeplabv3(weights=None, input_tensor=None, input_shape=(400, 400, 3), classes=2, backbone='xception', OS=16)
+# x = Activation(activation='softmax', name='softmax')(base_model.output)
+# model = Model(input=base_model.input, output=x)
+#
+# print(model.summary())
+# model.load_weights(weights_file)
+#
+# # load mean
+# mean = np.load(mean_file)
+# mean = mean * 255
+# print('mean', mean)
+#
+# inference_images = glob(image_save_folder + '/*' + image_extension)
+#
+# for id, image_path in enumerate(inference_images):
+#
+#     print(id)
+#     img = cv2.imread(image_path)
+#     img = preprocessing(img, mean)
+#     prediction = model.predict(img)
+#
+#     prediction = np.argmax(prediction, axis=-1).astype('uint8')
+#     prediction = np.squeeze(prediction, axis= 0)
+#     prediction_save_path = os.path.join(output_save_folder, os.path.split(image_path)[-1].split('.')[0] + '.png')
+#     print(prediction_save_path)
+#
+#     cv2.imwrite(prediction_save_path, prediction)
