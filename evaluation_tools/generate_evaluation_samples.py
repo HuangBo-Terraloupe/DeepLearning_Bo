@@ -27,7 +27,7 @@ number_of_validation_samples = 4000
 image_extension = '.png'
 
 yml_file = '/home/bo_huang/model_evaluation/building_validation_samples/mordor_merged_dataset_full.yml'
-weights_file = '/home/bo_huang/model_evaluation/waterbody_validation_samples/model_class_f1_cl0_052-0.961.hdf5'
+weights_file = '/home/bo_huang/model_evaluation/waterbody_validation_samples/model_loss_178-0.017.hdf5'
 mean_file = '/home/bo_huang/model_evaluation/waterbody_validation_samples/mean.npy'
 
 output_save_folder = '/home/bo_huang/model_evaluation/waterbody_validation_samples/predictions'
@@ -66,46 +66,56 @@ bucket = gclient.get_bucket('patches.terraloupe.com')
 # print('loading images and masks are done')
 
 id = 0
-
 for path in bucket.list_blobs(prefix='germany_water_masks/v0/validation/rgbi/'):
 
-    #blob = bucket.get_blob(path)
-    import pdb
-    pdb.set_trace()
+    if path.name.endswith(image_extension):
+        image_name = os.path.split(path.name)[-1]
+        image_copy_path = os.path.join(image_save_folder, image_name)
+        path.download_to_filename(image_copy_path)
+        id = id + 1
+        print(id)
 
-    # get image name
-    path.download_to_filename('test.jpg')
-
-    if id == 20:
+    if id == number_of_validation_samples:
         break
 
-    id = id + 1
+id = 0
+for path in bucket.list_blobs(prefix='germany_water_masks/v0/validation/masks/'):
 
-# # load model
-# base_model = Deeplabv3(weights=None, input_tensor=None, input_shape=(400, 400, 3), classes=2, backbone='xception', OS=16)
-# x = Activation(activation='softmax', name='softmax')(base_model.output)
-# model = Model(input=base_model.input, output=x)
-#
-# print(model.summary())
-# model.load_weights(weights_file)
-#
-# # load mean
-# mean = np.load(mean_file)
-# mean = mean * 255
-# print('mean', mean)
-#
-# inference_images = glob(image_save_folder + '/*' + image_extension)
-#
-# for id, image_path in enumerate(inference_images):
-#
-#     print(id)
-#     img = cv2.imread(image_path)
-#     img = preprocessing(img, mean)
-#     prediction = model.predict(img)
-#
-#     prediction = np.argmax(prediction, axis=-1).astype('uint8')
-#     prediction = np.squeeze(prediction, axis= 0)
-#     prediction_save_path = os.path.join(output_save_folder, os.path.split(image_path)[-1].split('.')[0] + '.png')
-#     print(prediction_save_path)
-#
-#     cv2.imwrite(prediction_save_path, prediction)
+    if path.name.endswith(image_extension):
+        mask_name = os.path.split(path.name)[-1]
+        mask_copy_path = os.path.join(mask_save_folder, mask_name)
+        path.download_to_filename(mask_copy_path)
+        id = id + 1
+        print(id)
+
+    if id == number_of_validation_samples:
+        break
+
+# load model
+base_model = Deeplabv3(weights=None, input_tensor=None, input_shape=(400, 400, 4), classes=2, backbone='xception', OS=16)
+x = Activation(activation='softmax', name='softmax')(base_model.output)
+model = Model(input=base_model.input, output=x)
+
+print(model.summary())
+model.load_weights(weights_file)
+
+# load mean
+mean = np.load(mean_file)
+mean = mean * 255
+print('mean', mean)
+
+inference_images = glob(image_save_folder + '/*' + image_extension)
+
+for id, image_path in enumerate(inference_images):
+
+    print(id)
+    img = cv2.imread(image_path)
+    img = preprocessing(img, mean)
+    prediction = model.predict(img)
+
+    prediction = np.argmax(prediction, axis=-1).astype('uint8')
+    prediction = np.squeeze(prediction, axis= 0)
+    prediction_save_path = os.path.join(output_save_folder, os.path.split(image_path)[-1].split('.')[0] + '.png')
+    print(prediction_save_path)
+
+    cv2.imwrite(prediction_save_path, prediction)
