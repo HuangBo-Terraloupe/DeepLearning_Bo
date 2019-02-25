@@ -7,6 +7,7 @@ from keras.layers import Activation
 from keras.models import Model
 
 from keras.applications import xception
+from skimage.io import imread
 
 from models.deeplab_v3_plus import Deeplabv3
 from gcloud import storage
@@ -65,31 +66,31 @@ bucket = gclient.get_bucket('patches.terraloupe.com')
 #
 # print('loading images and masks are done')
 
-id = 0
-for path in bucket.list_blobs(prefix='germany_water_masks/v0/validation/rgbi/'):
-
-    if path.name.endswith(image_extension):
-        image_name = os.path.split(path.name)[-1]
-        image_copy_path = os.path.join(image_save_folder, image_name)
-        path.download_to_filename(image_copy_path)
-        id = id + 1
-        print(id)
-
-    if id == number_of_validation_samples:
-        break
-
-id = 0
-for path in bucket.list_blobs(prefix='germany_water_masks/v0/validation/masks/'):
-
-    if path.name.endswith(image_extension):
-        mask_name = os.path.split(path.name)[-1]
-        mask_copy_path = os.path.join(mask_save_folder, mask_name)
-        path.download_to_filename(mask_copy_path)
-        id = id + 1
-        print(id)
-
-    if id == number_of_validation_samples:
-        break
+# id = 0
+# for path in bucket.list_blobs(prefix='germany_water_masks/v0/validation/rgbi/'):
+#
+#     if path.name.endswith(image_extension):
+#         image_name = os.path.split(path.name)[-1]
+#         image_copy_path = os.path.join(image_save_folder, image_name)
+#         path.download_to_filename(image_copy_path)
+#         id = id + 1
+#         print(id)
+#
+#     if id == number_of_validation_samples:
+#         break
+#
+# id = 0
+# for path in bucket.list_blobs(prefix='germany_water_masks/v0/validation/masks/'):
+#
+#     if path.name.endswith(image_extension):
+#         mask_name = os.path.split(path.name)[-1]
+#         mask_copy_path = os.path.join(mask_save_folder, mask_name)
+#         path.download_to_filename(mask_copy_path)
+#         id = id + 1
+#         print(id)
+#
+#     if id == number_of_validation_samples:
+#         break
 
 # load model
 base_model = Deeplabv3(weights=None, input_tensor=None, input_shape=(400, 400, 4), classes=2, backbone='xception', OS=16)
@@ -109,7 +110,7 @@ inference_images = glob(image_save_folder + '/*' + image_extension)
 for id, image_path in enumerate(inference_images):
 
     print(id)
-    img = cv2.imread(image_path)
+    img = imread(image_path)
     img = preprocessing(img, mean)
     prediction = model.predict(img)
 
