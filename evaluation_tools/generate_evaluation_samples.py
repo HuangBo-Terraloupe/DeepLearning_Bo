@@ -22,7 +22,7 @@ def preprocessing(x, mean):
 
 
 number_of_validation_samples = 4000
-image_extension = '.png'
+image_extension = '.jpg'
 
 yml_file = '/home/bo_huang/model_evaluation/building_validation_samples/mordor_merged_dataset_full.yml'
 weights_file = '/home/bo_huang/model_evaluation/building_validation_samples/model_iou_008-0.814.hdf5'
@@ -32,35 +32,35 @@ output_save_folder = '/home/bo_huang/model_evaluation/building_validation_sample
 image_save_folder = '/home/bo_huang/model_evaluation/building_validation_samples/images'
 mask_save_folder = '/home/bo_huang/model_evaluation/building_validation_samples/masks'
 
-# download images from gcloud
-gclient = storage.Client()
-bucket = gclient.get_bucket('training-datasets.terraloupe.com')
-
-# load images path
-with open(yml_file, 'rb') as fp:
-    spec = yaml.load(fp.read())
-
-validation_images = spec['testing']['images'][0:number_of_validation_samples]
-validation_images = [os.path.join('mordor/', x) for x in validation_images]
-
-validation_masks = spec['testing']['labels'][0:number_of_validation_samples]
-validation_masks = [os.path.join('mordor/', x) for x in validation_masks]
-
-for image_id, image in enumerate(validation_images):
-    print(image_id)
-    blob = bucket.blob(image)
-    image_name = os.path.split(image)[-1]
-    image_copy_path = os.path.join(image_save_folder, image_name)
-    blob.download_to_filename(image_copy_path)
-
-for mask_id, mask in enumerate(validation_masks):
-    print(mask_id)
-    blob = bucket.blob(mask)
-    mask_name = os.path.split(mask)[-1]
-    mask_copy_path = os.path.join(mask_save_folder, mask_name)
-    blob.download_to_filename(mask_copy_path)
-
-print('loading images and masks are done')
+# # download images from gcloud
+# gclient = storage.Client()
+# bucket = gclient.get_bucket('training-datasets.terraloupe.com')
+#
+# # load images path
+# with open(yml_file, 'rb') as fp:
+#     spec = yaml.load(fp.read())
+#
+# validation_images = spec['testing']['images'][0:number_of_validation_samples]
+# validation_images = [os.path.join('mordor/', x) for x in validation_images]
+#
+# validation_masks = spec['testing']['labels'][0:number_of_validation_samples]
+# validation_masks = [os.path.join('mordor/', x) for x in validation_masks]
+#
+# for image_id, image in enumerate(validation_images):
+#     print(image_id)
+#     blob = bucket.blob(image)
+#     image_name = os.path.split(image)[-1]
+#     image_copy_path = os.path.join(image_save_folder, image_name)
+#     blob.download_to_filename(image_copy_path)
+#
+# for mask_id, mask in enumerate(validation_masks):
+#     print(mask_id)
+#     blob = bucket.blob(mask)
+#     mask_name = os.path.split(mask)[-1]
+#     mask_copy_path = os.path.join(mask_save_folder, mask_name)
+#     blob.download_to_filename(mask_copy_path)
+#
+# print('loading images and masks are done')
 
 # load model
 base_model = Deeplabv3(weights=None, input_tensor=None, input_shape=(400, 400, 3), classes=2, backbone='xception', OS=16)
