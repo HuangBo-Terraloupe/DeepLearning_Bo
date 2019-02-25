@@ -37,7 +37,7 @@ mask_save_folder = '/home/bo_huang/model_evaluation/waterbody_validation_samples
 # download images from gcloud
 gclient = storage.Client()
 bucket = gclient.get_bucket('patches.terraloupe.com')
-get_ipython().run_line_magic('pinfo2', 'bucket.list_blobs')
+
 
 # # load images path
 # with open(yml_file, 'rb') as fp:
@@ -65,15 +65,21 @@ get_ipython().run_line_magic('pinfo2', 'bucket.list_blobs')
 #
 # print('loading images and masks are done')
 
-for id, path in enumerate(bucket.list_blobs(prefix='germany_water_masks/v0/validation/rgbi/')):
-    blob = bucket.get_blob(path)
+id = 0
+
+for path in bucket.list_blobs(prefix='germany_water_masks/v0/validation/rgbi/'):
+
+    #blob = bucket.get_blob(path)
+    import pdb
+    pdb.set_trace()
 
     # get image name
-
-    blob.download_to_filename('test.jpg')
+    path.download_to_filename('test.jpg')
 
     if id == 20:
         break
+
+    id = id + 1
 
 # # load model
 # base_model = Deeplabv3(weights=None, input_tensor=None, input_shape=(400, 400, 3), classes=2, backbone='xception', OS=16)
