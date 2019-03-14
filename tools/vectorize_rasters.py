@@ -131,6 +131,7 @@ def process_vectorization(input_dir, output_dir, category_info, cores=4):
     # get all merged images output directory
     fids = glob(input_dir + '/*.tif')
     fids.sort()
+    print(fids)
 
     # set up params via zip
     n = len(fids)
@@ -214,4 +215,4 @@ if __name__ == '__main__':
     input_dir = '/home/bo_huang/workflow/road_germany_inference/terrascale.terraloupe.com/segmentation_results/road_brandenburg'
     output_dir = '/home/bo_huang/workflow/road_germany_inference/terrascale.terraloupe.com/segmentation_results/vectors'
     category_info = '/home/bo_huang/workflow/road_germany_inference/terrascale.terraloupe.com/parking_categories'
-    process_vectorization(input_dir, output_dir, category_info, cores=8)
+    process_vectorization(input_dir, output_dir, category_info, cores=1)
