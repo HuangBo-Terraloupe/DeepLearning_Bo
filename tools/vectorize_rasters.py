@@ -166,7 +166,8 @@ def vectorize_image(raster_list, output_dir, category_info):
     """
 
     # unpack inputs
-    for fid in raster_list:
+    for id, fid in enumerate(raster_list):
+        print(id)
 
         # load merged classified raster -> vectorize
         im = rasterio.open(fid)
@@ -213,4 +214,4 @@ if __name__ == '__main__':
     input_dir = '/home/bo_huang/workflow/road_germany_inference/terrascale.terraloupe.com/segmentation_results/road_brandenburg'
     output_dir = '/home/bo_huang/workflow/road_germany_inference/terrascale.terraloupe.com/segmentation_results/vectors'
     category_info = '/home/bo_huang/workflow/road_germany_inference/terrascale.terraloupe.com/parking_categories'
-    process_vectorization(input_dir, output_dir, category_info, cores=16)
+    process_vectorization(input_dir, output_dir, category_info, cores=8)
