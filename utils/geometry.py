@@ -80,7 +80,7 @@ def combine_multi_rasters(raster_1, raster_2, output_raster):
     im_ndarray.astype(np.uint8)
 
     with rasterio.open(output_raster, 'w', **im1.profile) as ff:
-        ff.write(output_raster, 1)
+        ff.write()
 
 
 if __name__ == '__main__':
