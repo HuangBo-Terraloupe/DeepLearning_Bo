@@ -70,10 +70,10 @@ def explode(gdf):
 
 def combine_multi_rasters(raster_1, raster_2, output_raster):
     im1 = rasterio.open(raster_1)
-    im1_ndarray = im1.read(1)
+    im1_ndarray = im1.read(1).astype(int)
 
     im2 = rasterio.open(raster_2)
-    im2_ndarray = im2.read(1)
+    im2_ndarray = im2.read(1).astype(int)
 
     im_ndarray = im1_ndarray + im2_ndarray
     im_ndarray[im_ndarray > 0] = 1
