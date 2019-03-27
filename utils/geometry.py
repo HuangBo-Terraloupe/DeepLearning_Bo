@@ -79,6 +79,7 @@ def combine_multi_rasters(raster_1, raster_2, output_raster):
     im_ndarray[im_ndarray > 0] = 1
     im_ndarray.astype(np.uint8)
 
+    print(im_ndarray.max(), im_ndarray.min())
     with rasterio.open(output_raster, 'w', **im1.profile) as ff:
         ff.write()
 
