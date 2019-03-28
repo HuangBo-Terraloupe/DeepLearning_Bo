@@ -81,7 +81,7 @@ def combine_multi_rasters(raster_1, raster_2, output_raster):
     #
     # print(im_ndarray.max(), im_ndarray.min())
     with rasterio.open(output_raster, 'w', **im1.profile) as ff:
-        ff.write()
+        ff.write(im_ndarray)
 
 
 if __name__ == '__main__':
