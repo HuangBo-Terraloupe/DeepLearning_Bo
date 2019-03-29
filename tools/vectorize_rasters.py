@@ -212,7 +212,7 @@ def vectorize_image(raster_list, output_dir, category_info):
             write_json(out, name.split('.')[0], output_dir, geo_flag=True, indent=None)
 
 if __name__ == '__main__':
-    input_dir = '/home/bo_huang/workflow/road_germany_inference/terrascale.terraloupe.com/segmentation_results/road_brandenburg'
-    output_dir = '/home/bo_huang/workflow/road_germany_inference/terrascale.terraloupe.com/segmentation_results/vectors'
-    category_info = '/home/bo_huang/workflow/road_germany_inference/terrascale.terraloupe.com/parking_categories'
+    input_dir = '/home/bo_huang/rasters/pools'
+    output_dir = '/home/bo_huang/rasters/pools'
+    category_info = '/home/bo_huang/rasters/pools/pools_category'
     process_vectorization(input_dir, output_dir, category_info, cores=1)
