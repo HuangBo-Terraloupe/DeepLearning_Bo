@@ -129,7 +129,7 @@ def vectorize_image(input_dir, output_dir, category, threshold):
             temp = im.read(1)
             data = data + temp
 
-    print('the data is between', min(data), 'and', max(data))
+    print('the data is between', min(data.all()), 'and', max(data.all()))
     # build "Truth" mask for everything that should be included in the vectorization
     mask = np.zeros(data.shape, dtype=np.bool)
     mask[data > threshold] = 1
