@@ -161,5 +161,5 @@ if __name__ == '__main__':
     input_dir = '/home/bo_huang/rasters'
     output_dir = '/home/bo_huang/rasters'
     category_info = 'lane_markings'
-    threshold = '0'
+    threshold = 0
     vectorize_image(input_dir, output_dir, category_info, threshold)
