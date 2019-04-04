@@ -129,13 +129,9 @@ def vectorize_image(input_dir, output_dir, category, threshold):
             temp = im.read(1)
             data = data + temp
 
-    import pdb
-    pdb.set_trace()
-    #print('the data is between', min(data.all()), 'and', max(data.all()))
-    # build "Truth" mask for everything that should be included in the vectorization
-    mask = np.zeros(data.shape, dtype=np.bool)
-    mask[data > threshold] = 1
-    mask = np.array(mask, dtype=np.bool)
+    data[data > threshold] = 1
+    data[data <= threshold] = 0
+    mask = np.array(data, dtype=np.bool)
 
     # contour raster image -> build polygons
     temp = shapes(data, mask, transform=im.transform)
