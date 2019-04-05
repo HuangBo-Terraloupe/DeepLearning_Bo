@@ -121,14 +121,12 @@ def vectorize_image(raster_1, raster_2, output_file, category, threshold):
     im2 = rasterio.open(raster_2)
     data_2 = im2.read(1)
 
-    import pdb
-    pdb.set_trace()
-
 
     data = data_1 + data_2
 
-    data[data > threshold] = 1
     data[data <= threshold] = 0
+    data[data > threshold] = 1
+
 
     print(data.max(), data.min())
     mask = np.array(data, dtype=np.bool)
