@@ -121,6 +121,10 @@ def vectorize_image(raster_1, raster_2, output_file, category, threshold):
     im2 = rasterio.open(raster_2)
     data_2 = im2.read(1)
 
+
+    import pdb
+    pdb.set_trace()
+
     data_1 = np.int(data_1 / 2)
     data_2 = np.int(data_2 / 2)
 
