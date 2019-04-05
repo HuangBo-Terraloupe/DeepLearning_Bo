@@ -141,7 +141,7 @@ def vectorize_image(raster_1, raster_2, output_file, category, threshold):
 
         v = int(v)
         geo = shape(t)
-        geo = box(*geo.bounds)
+        #geo = box(*geo.bounds)
 
         out.append(GeoSeries({'geometry': geo,
                               'num': v,
