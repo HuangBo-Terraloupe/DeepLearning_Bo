@@ -120,6 +120,11 @@ def vectorize_image(raster_1, raster_2, output_file, category, threshold):
     # load merged classified raster -> vectorize
     im2 = rasterio.open(raster_2)
     data_2 = im2.read(1)
+
+    import pdb
+    pdb.set_trace()
+
+
     data = data_1 + data_2
 
     data[data > threshold] = 1
