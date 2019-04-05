@@ -1,7 +1,6 @@
 import os
 import json
 import rasterio
-import multiprocessing
 import numpy as np
 
 from glob import glob
@@ -103,7 +102,7 @@ def write_json(data, output_name, output_dir, geo_flag=True, indent=4):
         json.dump(result, fp, indent=indent, sort_keys=True)
 
 
-def vectorize_image(input_dir, output_dir, category, threshold):
+def vectorize_image(raster_1, raster_2, output_file, category, threshold):
     """
     Core function for converting raster to vector features in a *.pickle file
 
@@ -114,27 +113,23 @@ def vectorize_image(input_dir, output_dir, category, threshold):
         *.pickle file containing GeoDataFrame containing shapes by category
 
     """
+    # load merged classified raster -> vectorize
+    im1 = rasterio.open(raster_1)
+    data_1 = im1.read(1)
 
-    # unpack inputs
-    raster_list = glob(input_dir + '/*.tif')
-    for id, fid in enumerate(raster_list):
-
-        if id == 0:
-            # load merged classified raster -> vectorize
-            im = rasterio.open(fid)
-            data = im.read(1)
-        else:
-            # load merged classified raster -> vectorize
-            im = rasterio.open(fid)
-            temp = im.read(1)
-            data = data + temp
+    # load merged classified raster -> vectorize
+    im2 = rasterio.open(raster_2)
+    data_2 = im2.read(1)
+    data = data_1 + data_2
 
     data[data > threshold] = 1
     data[data <= threshold] = 0
+
+    print(data.max(), data.min())
     mask = np.array(data, dtype=np.bool)
 
     # contour raster image -> build polygons
-    temp = shapes(data, mask, transform=im.transform)
+    temp = shapes(data, mask, transform=im1.transform)
 
 
     # compile results together as shapely geometry -> build GeoSeries
@@ -148,18 +143,20 @@ def vectorize_image(input_dir, output_dir, category, threshold):
         out.append(GeoSeries({'geometry': geo,
                               'num': v,
                               'category': category}))
-
+    print(len(out))
     # only write out features if they exist!
     if len(out) > 0:
         out = GeoDataFrame(out).sort_values(by='num', ascending=True)
-        out.crs = im.crs  # get epsg from input file
+        out.crs = im1.crs  # get epsg from input file
 
         # write file to *.geojson
-        out.to_file(driver='ESRI Shapefile', filename=os.path.join(output_dir, 'combined.shp'))
+        out.to_file(driver='ESRI Shapefile', filename=output_file)
 
 if __name__ == '__main__':
-    input_dir = '/home/bo_huang/rasters'
-    output_dir = '/home/bo_huang/rasters'
-    category_info = 'lane_markings'
-    threshold = 0
-    vectorize_image(input_dir, output_dir, category_info, threshold)
+    raster_1 = '/home/bo_huang/rasters/nrw_dop10_dortmund_cloud_18k.tif'
+    raster_2 = '/home/bo_huang/rasters/nrw_dop10_dortmund_cloud_35k.tif'
+    output_file = '/home/bo_huang/rasters/combined.shp'
+    category = 'lane_markings'
+    threshold = 50
+    vectorize_image(raster_1, raster_2, output_file, category, threshold)
+
