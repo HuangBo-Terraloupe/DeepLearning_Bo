@@ -3,6 +3,7 @@ import json
 import rasterio
 import numpy as np
 
+
 from glob import glob
 from rasterio.features import shapes
 from shapely.geometry import shape, box
@@ -157,11 +158,51 @@ def vectorize_image(raster_1, raster_2, output_file, category, threshold):
         # write file to *.geojson
         out.to_file(driver='ESRI Shapefile', filename=output_file)
 
+
+
+def combine_two_geo_tif(raster_1, raster_2, output_file):
+    """
+    Core function for converting raster to vector features in a *.pickle file
+
+    Args:
+        input_params: zipped list containing -> (fid, temp_dir, output_dir, category_info)
+
+    Returns:
+        *.pickle file containing GeoDataFrame containing shapes by category
+
+    """
+    # load merged classified raster -> vectorize
+    im1 = rasterio.open(raster_1)
+    data_1 = im1.read(1)
+
+    # load merged classified raster -> vectorize
+    im2 = rasterio.open(raster_2)
+    data_2 = im2.read(1)
+
+    data_1 = (data_1 / 2).astype('uint8')
+    data_2 = (data_2 / 2).astype('uint8')
+
+    data = data_1 + data_2
+
+    data[data <= threshold] = 0
+    data[data > threshold] = 1
+
+
+    print(data.max(), data.min())
+
+    meta_data = im1.profile
+
+    with rasterio.open(output_file, 'w', **meta_data) as dst:
+        dst.write(data, 1)
+
+
 if __name__ == '__main__':
     raster_1 = '/home/bo_huang/rasters/nrw_dop10_dortmund_cloud_18k.tif'
     raster_2 = '/home/bo_huang/rasters/nrw_dop10_dortmund_cloud_35k.tif'
-    output_file = '/home/bo_huang/rasters/combined.shp'
+    output_file = '/home/bo_huang/rasters/geo_tif_combined.tif'
     category = 'lane_markings'
     threshold = 50
-    vectorize_image(raster_1, raster_2, output_file, category, threshold)
+
+    combine_two_geo_tif(raster_1, raster_2, output_file)
+    #vectorize_image(raster_1, raster_2, output_file, category, threshold)
 
