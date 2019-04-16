@@ -194,6 +194,40 @@ def combine_two_geo_tif(raster_1, raster_2, output_file):
     with rasterio.open(output_file, 'w', **meta_data) as dst:
         dst.write(data, 1)
 
+def combine_two_geo_tif_filter_before_merge(raster_1, raster_2, output_file):
+    """
+    Core function for converting raster to vector features in a *.pickle file
+
+    Args:
+        input_params: zipped list containing -> (fid, temp_dir, output_dir, category_info)
+
+    Returns:
+        *.pickle file containing GeoDataFrame containing shapes by category
+
+    """
+    # load merged classified raster -> vectorize
+    im1 = rasterio.open(raster_1)
+    data_1 = im1.read(1)
+
+    # load merged classified raster -> vectorize
+    im2 = rasterio.open(raster_2)
+    data_2 = im2.read(1)
+
+    data_1[data_1 <= threshold] = 0
+    data_1[data_1 > threshold] = 1
+
+    data_2[data_2 <= threshold] = 0
+    data_2[data_2 > threshold] = 1
+
+    data = (data_1 + data_2).astype('uint8')
+
+    print(data.max(), data.min())
+
+    meta_data = im1.profile
+
+    with rasterio.open(output_file, 'w', **meta_data) as dst:
+        dst.write(data, 1)
+
 def filter_raster_with_threshold(raster, threshold, output_file):
     # load merged classified raster -> vectorize
     im = rasterio.open(raster)
@@ -210,11 +244,11 @@ def filter_raster_with_threshold(raster, threshold, output_file):
 if __name__ == '__main__':
     raster_1 = '/home/bo_huang/segmentation_results/old_blurred_images/baseline_36k/lane_marking_dortmund_36k.tif'
     raster_2 = '/home/bo_huang/segmentation_results/old_blurred_images/data_argumentation_36k_6k/36k_6k_old_without_dataargumentation.tif'
-    output_file = '/home/bo_huang/segmentation_results/old_blurred_images/ensamble/'
+    output_file = '/home/bo_huang/segmentation_results/old_blurred_images/ensamble/ensamble_v2.tif'
     #category = 'lane_markings'
     threshold = 70
 
-    combine_two_geo_tif(raster_1, raster_2, output_file)
+    combine_two_geo_tif_filter_before_merge(raster_1, raster_2, output_file)
     #vectorize_image(raster_1, raster_2, output_file, category, threshold)
 
     #filter_raster_with_threshold(raster, threshold, output_file)
