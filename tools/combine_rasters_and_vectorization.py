@@ -3,7 +3,6 @@ import json
 import rasterio
 import numpy as np
 
-
 from glob import glob
 from rasterio.features import shapes
 from shapely.geometry import shape, box
@@ -195,14 +194,30 @@ def combine_two_geo_tif(raster_1, raster_2, output_file):
     with rasterio.open(output_file, 'w', **meta_data) as dst:
         dst.write(data, 1)
 
+def filter_raster_with_threshold(raster, threshold, output_file):
+    # load merged classified raster -> vectorize
+    im = rasterio.open(raster)
+    data = im.read(1)
+
+    data[data <= threshold] = 0
+    data[data > threshold] = 1
+
+    meta_data = im.profile
+
+    with rasterio.open(output_file, 'w', **meta_data) as dst:
+        dst.write(data, 1)
 
 if __name__ == '__main__':
-    raster_1 = '/home/bo_huang/rasters/nrw_dop10_dortmund_cloud_18k.tif'
-    raster_2 = '/home/bo_huang/rasters/nrw_dop10_dortmund_cloud_35k.tif'
-    output_file = '/home/bo_huang/rasters/geo_tif_combined.tif'
-    category = 'lane_markings'
-    threshold = 50
+    raster_1 = '/home/bo_huang/segmentation_results/old_blurred_images/baseline_36k/lane_marking_dortmund_36k.tif'
+    raster_2 = '/home/bo_huang/segmentation_results/old_blurred_images/data_argumentation_36k_6k/36k_6k_old_without_dataargumentation.tif'
+    output_file = '/home/bo_huang/segmentation_results/old_blurred_images/ensamble/'
+    #category = 'lane_markings'
+    threshold = 70
 
     combine_two_geo_tif(raster_1, raster_2, output_file)
     #vectorize_image(raster_1, raster_2, output_file, category, threshold)
+
+    #filter_raster_with_threshold(raster, threshold, output_file)
+
+
 

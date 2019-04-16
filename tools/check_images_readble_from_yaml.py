@@ -61,5 +61,5 @@ if __name__ == '__main__':
     # image_folder_2 = '/data/here/san_francisco/images_30/'
     # input_file = [image_folder_1, image_folder_2]
     input_file = '/home/bo_huang/here_v1/here_v2_texas.yml'
-    n_worker = 32
+    n_worker = 2
     run(input_file, n_worker)
