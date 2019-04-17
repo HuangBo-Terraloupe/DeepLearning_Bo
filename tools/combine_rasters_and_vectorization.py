@@ -229,6 +229,15 @@ def combine_two_geo_tif_filter_before_merge(raster_1, raster_2, output_file):
         dst.write(data, 1)
 
 def filter_raster_with_threshold(raster, threshold, output_file):
+    ''' Filter the raster with probobility by threshold.
+    Args:
+        raster: .tif file with probability
+        threshold: threshold
+        output_file: output .tif
+
+    Returns:
+
+    '''
     # load merged classified raster -> vectorize
     im = rasterio.open(raster)
     data = im.read(1)
@@ -242,13 +251,13 @@ def filter_raster_with_threshold(raster, threshold, output_file):
         dst.write(data, 1)
 
 if __name__ == '__main__':
-    raster_1 = '/home/bo_huang/segmentation_results/old_blurred_images/baseline_36k/lane_marking_dortmund_36k.tif'
-    raster_2 = '/home/bo_huang/segmentation_results/old_blurred_images/data_argumentation_36k_6k/36k_6k_old_without_dataargumentation.tif'
-    output_file = '/home/bo_huang/segmentation_results/old_blurred_images/ensamble/ensamble_v2.tif'
+    raster_1 = '/home/bo_huang/lane_marking_raster/baseline_36k/lane_marking_dortmund_36k.tif'
+    raster_2 = '/home/bo_huang/lane_marking_raster/data_argumentation_36k_6k/36k_6k_old_without_dataargumentation.tif'
+    output_file = '/home/bo_huang/lane_marking_raster/ensamble/ensamble_threshold_100.tif'
     #category = 'lane_markings'
-    threshold = 70
+    threshold = 100
 
-    combine_two_geo_tif_filter_before_merge(raster_1, raster_2, output_file)
+    combine_two_geo_tif(raster_1, raster_2, output_file)
     #vectorize_image(raster_1, raster_2, output_file, category, threshold)
 
     #filter_raster_with_threshold(raster, threshold, output_file)
