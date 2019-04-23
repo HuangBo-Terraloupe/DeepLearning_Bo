@@ -251,9 +251,9 @@ def filter_raster_with_threshold(raster, threshold, output_file):
         dst.write(data, 1)
 
 if __name__ == '__main__':
-    raster_1 = '/home/bo_huang/lane_marking_raster/baseline_36k/lane_marking_dortmund_36k.tif'
-    raster_2 = '/home/bo_huang/lane_marking_raster/data_argumentation_36k_6k/36k_6k_old_without_dataargumentation.tif'
-    output_file = '/home/bo_huang/lane_marking_raster/ensamble/ensamble_threshold_100.tif'
+    raster_1 = '/home/bo_huang/rasters/leverkusen_wms_36k_6k_with_data_argumentation.tif'
+    raster_2 = '/home/bo_huang/rasters/leverkusen_wms_36k_6k_without_data_argumentation.tif'
+    output_file = '/home/bo_huang/rasters/combine_leverkusen_wms.tif'
     #category = 'lane_markings'
     threshold = 100
 
