@@ -1,6 +1,8 @@
 from keras.preprocessing.image import ImageDataGenerator
 
 
+
+
 def data_argumentation(img_width, img_height, total_num_samples, batch_size, image_data_dir, mask_data_dir,
                        save_to_dir_image, save_to_dir_mask):
     '''Do data argumentation using keras generator, it will generate both images and masks which are data-argumented.

@@ -251,11 +251,11 @@ def filter_raster_with_threshold(raster, threshold, output_file):
         dst.write(data, 1)
 
 if __name__ == '__main__':
-    raster_1 = '/home/bo_huang/rasters/leverkusen_wms_36k_6k_with_data_argumentation.tif'
-    raster_2 = '/home/bo_huang/rasters/leverkusen_wms_36k_6k_without_data_argumentation.tif'
-    output_file = '/home/bo_huang/rasters/combine_leverkusen_wms.tif'
+    raster_1 = '/home/terraloupe/Downloads/lane_marking_dortmund/segmentation_results/wms_new_images/ensamble/segmentation_results_lane_marking_36k_6k_data_argumented_with_inference_data_argumented_nrw_dop10_dortmund_wms_cloud.tif'
+    raster_2 = '/home/terraloupe/Downloads/lane_marking_dortmund/segmentation_results/wms_new_images/ensamble/segmentation_results_lane_marking_dortmund_33k_wms_3k_bad_case_without_argumentation_nrw_dop10_dortmund_wms_cloud.tif'
+    output_file = '/home/terraloupe/Downloads/lane_marking_dortmund/segmentation_results/wms_new_images/ensamble/ensamble.tif'
     #category = 'lane_markings'
-    threshold = 100
+    threshold = 80
 
     combine_two_geo_tif(raster_1, raster_2, output_file)
     #vectorize_image(raster_1, raster_2, output_file, category, threshold)
